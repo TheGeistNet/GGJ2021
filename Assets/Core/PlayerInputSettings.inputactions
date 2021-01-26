@@ -1,5 +1,5 @@
 {
-    "name": "PlayerInput",
+    "name": "PlayerInputSettings",
     "maps": [
         {
             "name": "Gameplay",
@@ -10,6 +10,14 @@
                     "type": "Value",
                     "id": "48577e63-82d7-4dbf-8fcb-0f1f3a089f8c",
                     "expectedControlType": "Axis",
+                    "processors": "AxisDeadzone,Clamp(min=-1,max=1)",
+                    "interactions": ""
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "bc97ef4a-f5bf-4670-a6e4-6645e3a45e90",
+                    "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
                 }
@@ -73,7 +81,7 @@
                 {
                     "name": "positive",
                     "id": "265815af-d08b-4045-863d-a3cef51ff209",
-                    "path": "<Keyboard>/delete",
+                    "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
                     "groups": "Mouse & Keyboard",
@@ -113,6 +121,39 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "95d3b83e-86ce-4155-87ce-cd234d3da984",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse & Keyboard",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "92a62ba0-7617-4899-bff6-7c8d620c80b3",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse & Keyboard",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "289efa91-96e3-4ec8-88f6-47901e792b6a",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Gamepad",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -148,12 +189,24 @@
         {
             "name": "Gamepad",
             "bindingGroup": "Gamepad",
-            "devices": []
+            "devices": [
+                {
+                    "devicePath": "<Gamepad>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
         },
         {
             "name": "Mouse & Keyboard",
             "bindingGroup": "Mouse & Keyboard",
-            "devices": []
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
         }
     ]
 }
