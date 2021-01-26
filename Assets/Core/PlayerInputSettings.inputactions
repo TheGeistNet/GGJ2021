@@ -7,9 +7,9 @@
             "actions": [
                 {
                     "name": "Move",
-                    "type": "Value",
+                    "type": "Button",
                     "id": "48577e63-82d7-4dbf-8fcb-0f1f3a089f8c",
-                    "expectedControlType": "Axis",
+                    "expectedControlType": "Button",
                     "processors": "AxisDeadzone,Clamp(min=-1,max=1)",
                     "interactions": ""
                 },
@@ -137,6 +137,17 @@
                     "name": "",
                     "id": "92a62ba0-7617-4899-bff6-7c8d620c80b3",
                     "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Mouse & Keyboard",
+                    "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3419dc51-686c-46c6-8429-deb555a8ef06",
+                    "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "Mouse & Keyboard",

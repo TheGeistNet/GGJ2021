@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(BoxCollider2D))]
 
@@ -54,6 +55,7 @@ public class SCR_PlayerController : MonoBehaviour
     {
         CalculateBoundingBox();
         CalculateRayOrigins();
+        //playerInput.actions.FindAction<"Jump">
     }
 
     private void FixedUpdate()
@@ -158,7 +160,7 @@ public class SCR_PlayerController : MonoBehaviour
 
         // Calculate horizontal ray origins
         horizontalRayOrigins.Clear();
- 
+
         for (int idx = 0; idx < horizontalRayCount; idx++)
         {
             horizontalRayOrigins.Add(new Vector2(0.0f, ((float)idx * horizontalRaySpacing) - halfHeight));
@@ -172,6 +174,20 @@ public class SCR_PlayerController : MonoBehaviour
         }
 
         return;
+    }
+
+    // Controls
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            Debug.Log("Jump Pressed");
+
+        }
+        else if (context.canceled)
+        {
+            Debug.Log("Jump Released");
+        }
     }
 
 #if UNITY_EDITOR
