@@ -22,75 +22,125 @@ public class SCR_PlayerController : MonoBehaviour
 
     // Raycast settings
     [SerializeField, Min(2)]
-    int horizontalRayCount = 4;
+    int horizontalRayCount = 5;
     [SerializeField, Min(2)]
-    int verticalRayCount = 4;
+    int verticalRayCount = 5;
+    List<Vector2> horizontalRayOrigins = new List<Vector2>();
+    List<Vector2> verticalRayOrigins = new List<Vector2>();
+
+    // Physics
     [SerializeField]
-    const float rayLength = 1.0f;
-    List<Vector2> rightEdgeRayOrigins;
-    List<Vector2> leftEdgeRayOrigins;
-    List<Vector2> topEdgeRayOrigins;
-    List<Vector2> bottomEdgeRayOrigins;
+    float gravityAcceleration = 9.8f;
+    [SerializeField]
+    float gravityMaxMagnitude = 20.0f;
+    [SerializeField]
+    float gravityDirection = -1.0f;
+    [SerializeField]
+    LayerMask collisionMask;
+    bool isGrounded;
+    bool isCollidingRight;
+    bool isCollidingLeft;
+    Vector2 velocity;
+    Vector2 calculateMovement;
 
     // Debug variables
 #if UNITY_EDITOR
-    public bool debugDrawRays;
+    public bool debugPhysics;
+    List<Vector2> hitPoints = new List<Vector2>();
 #endif
 
     // Use awake to initialize values
     void Awake()
     {
-        rightEdgeRayOrigins = new List<Vector2>();
-        leftEdgeRayOrigins = new List<Vector2>();
-        topEdgeRayOrigins = new List<Vector2>();
-        bottomEdgeRayOrigins = new List<Vector2>();
         CalculateBoundingBox();
         CalculateRayOrigins();
     }
 
     private void FixedUpdate()
     {
-        PhysicsRaycast();
+        UpdateMovement();
     }
 
-    void PhysicsRaycast()
+    void UpdateMovement()
     {
+        // Update origin
         origin = boundingCollider.bounds.center;
 
+        // Calculate new gravity
+        velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravityDirection * Time.deltaTime), -gravityMaxMagnitude, gravityMaxMagnitude);
 
-        // Debug draw
-#if UNITY_EDITOR
+        // Handle collisions
+        UpdateVerticalCollisions();
 
-        if (debugDrawRays)
+        // Move the character
+        transform.Translate(calculateMovement);
+    }
+
+    void UpdateVerticalCollisions()
+    {
+        // Cache the proposed vertical movement
+        float proposedVerticalMovement = velocity.y * Time.deltaTime;
+
+        // If we are moving in the direction of gravity
+        if (Mathf.Sign(proposedVerticalMovement) == Mathf.Sign(gravityDirection))
         {
-            foreach (Vector2 rayOrigin in rightEdgeRayOrigins)
-            {
-                Debug.DrawRay(origin + rayOrigin, Vector2.right * rayLength, Color.red);
-            }
+            // Check if we are grounded
+            bool newIsGrounded = false;
+            RaycastHit2D hit;
+            float rayLength = halfHeight + Mathf.Abs(proposedVerticalMovement);
 
-            foreach (Vector2 rayOrigin in leftEdgeRayOrigins)
+            // Raycast in the direction of gravity
+            foreach (Vector2 rayOrigin in verticalRayOrigins)
             {
-                Debug.DrawRay(origin + rayOrigin, Vector2.left * rayLength, Color.cyan);
-            }
+                hit = Physics2D.Raycast(rayOrigin + origin, Vector2.up * gravityDirection, rayLength, collisionMask);
 
-            foreach (Vector2 rayOrigin in topEdgeRayOrigins)
-            {
-                Debug.DrawRay(origin + rayOrigin, Vector2.up * rayLength, Color.magenta);
-            }
+                // If raycast hit a target
+                if (hit.collider)
+                {
 
-            foreach (Vector2 rayOrigin in bottomEdgeRayOrigins)
+#if UNITY_EDITOR
+                    if (debugPhysics)
+                    {
+                        Debug.DrawLine(rayOrigin + origin, hit.point, Color.yellow);
+                        hitPoints.Add(hit.point);
+                    }
+#endif
+
+                    newIsGrounded = true;
+
+                    // Update velocity to move us out of any penetration
+                    velocity.y = 0.0f;
+                    calculateMovement.y = (hit.distance - halfHeight) * gravityDirection;
+                    // Update the ray length so we don't look for any hits further than the current hit
+                    rayLength = hit.distance;
+                }
+
+#if UNITY_EDITOR
+                else if (debugPhysics)
+                {
+                    Debug.DrawRay(rayOrigin + origin, Vector2.up * gravityDirection * rayLength, Color.cyan);
+                }
+#endif
+            }
+            isGrounded = newIsGrounded;
+            if (!isGrounded)
             {
-                Debug.DrawRay(origin + rayOrigin, Vector2.down * rayLength, Color.yellow);
+                calculateMovement.y = velocity.y * Time.deltaTime;
             }
         }
-#endif
+
+        // Otherwise we are not grounded
+        else
+        {
+            isGrounded = false;
+            calculateMovement.y = velocity.y * Time.deltaTime;
+        }
     }
 
     void CalculateBoundingBox()
     {
         // Setup collision
         boundingBox = boundingCollider.bounds;
-        boundingBox.Expand(skinWidth * -1.0f);
         halfWidth = boundingBox.size.x * 0.5f;
         halfHeight = boundingBox.size.y * 0.5f;
         bottomRightLocal = new Vector2(halfWidth, -halfHeight);
@@ -106,24 +156,37 @@ public class SCR_PlayerController : MonoBehaviour
         float horizontalRaySpacing = boundingBox.size.y / (float)(horizontalRayCount - 1);
         float verticalRaySpacing = boundingBox.size.x / (float)(verticalRayCount - 1);
 
-        // Calculate right and left edge origins
-        rightEdgeRayOrigins.Clear();
-        leftEdgeRayOrigins.Clear();
+        // Calculate horizontal ray origins
+        horizontalRayOrigins.Clear();
+ 
         for (int idx = 0; idx < horizontalRayCount; idx++)
         {
-            rightEdgeRayOrigins.Add(new Vector2(halfWidth, ((float)idx * horizontalRaySpacing) - halfHeight));
-            leftEdgeRayOrigins.Add(new Vector2(-halfWidth, ((float)idx * horizontalRaySpacing) - halfHeight));
+            horizontalRayOrigins.Add(new Vector2(0.0f, ((float)idx * horizontalRaySpacing) - halfHeight));
         }
 
-        // Calculate top and bottom edge origins
-        topEdgeRayOrigins.Clear();
-        bottomEdgeRayOrigins.Clear();
+        // Calculate vertical ray origins
+        verticalRayOrigins.Clear();
         for (int idx = 0; idx < verticalRayCount; idx++)
         {
-            topEdgeRayOrigins.Add(new Vector2(((float)idx * verticalRaySpacing) - halfWidth, halfHeight));
-            bottomEdgeRayOrigins.Add(new Vector2(((float)idx * verticalRaySpacing) - halfWidth, -halfHeight));
+            verticalRayOrigins.Add(new Vector2(((float)idx * verticalRaySpacing) - halfWidth, 0.0f));
         }
 
         return;
     }
+
+#if UNITY_EDITOR
+    private void OnDrawGizmos()
+    {
+        if (debugPhysics)
+        {
+            Gizmos.color = Color.yellow;
+            foreach (Vector2 hitPoint in hitPoints)
+            {
+                Gizmos.DrawWireSphere(hitPoint, 0.2f);
+            }
+            hitPoints.Clear();
+        }
+        return;
+    }
+#endif
 }
