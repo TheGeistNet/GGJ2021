@@ -43,6 +43,7 @@ public class SCR_PlayerController : MonoBehaviour
     bool isCollidingLeft;
     Vector2 velocity;
     Vector2 calculateMovement;
+    float jumpForce = 10.0f;
 
     // Debug variables
 #if UNITY_EDITOR
@@ -179,14 +180,9 @@ public class SCR_PlayerController : MonoBehaviour
     // Controls
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed)
+        if (context.performed && isGrounded)
         {
-            Debug.Log("Jump Pressed");
-
-        }
-        else if (context.canceled)
-        {
-            Debug.Log("Jump Released");
+            velocity += new Vector2(0.0f, jumpForce);
         }
     }
 
