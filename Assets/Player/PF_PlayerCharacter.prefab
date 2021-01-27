@@ -54,10 +54,11 @@ MonoBehaviour:
   verticalRayCount: 5
   gravityMaxMagnitude: 20
   gravityDirection: -1
-  gravityFallingMultiplier: 3
+  gravityFallingMultiplier: 2
   jumpTimeToApex: 0.6
   jumpHeightMax: 3
   jumpHeightMin: 1
+  jumpBufferTime: 0.1
   debugPhysics: 1
 --- !u!61 &1817163816175706379
 BoxCollider2D:

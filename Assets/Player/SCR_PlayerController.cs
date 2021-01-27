@@ -39,7 +39,7 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField]
     float gravityDirection = -1.0f;
     [SerializeField, Min(1.0f)]
-    float gravityFallingMultiplier = 3.0f;
+    float gravityFallingMultiplier = 2.0f;
     float gravityAccelerationDefault;
     float gravityAcceleration;
     bool isGrounded;
@@ -56,8 +56,12 @@ public class SCR_PlayerController : MonoBehaviour
     float jumpHeightMax = 3.0f;
     [SerializeField, Min (0.1f)]
     float jumpHeightMin = 1.0f;
+    [SerializeField, Min(0.0f)]
+    float jumpBufferTime = 0.1f;
     float jumpVelocityMax;
     float jumpVelocityMin;
+    bool jumpQueued;
+    float jumpQueueTime;
 
     // Debug variables
 #if UNITY_EDITOR
@@ -127,6 +131,7 @@ public class SCR_PlayerController : MonoBehaviour
             bool newIsGrounded = false;
             RaycastHit2D hit;
             float rayLength = halfHeight + Mathf.Abs(proposedVerticalMovement);
+            float groundDistance = 0.0f;
 
             // Raycast in the direction of gravity
             foreach (Vector2 rayOrigin in verticalRayOrigins)
@@ -144,13 +149,11 @@ public class SCR_PlayerController : MonoBehaviour
                         hitPoints.Add(hit.point);
                     }
 #endif
-
+                    // Update new is grounded
                     newIsGrounded = true;
 
-                    // Update velocity to move us out of any penetration
-                    velocity.y = 0.0f;
-                    calculateMovement.y = (hit.distance - halfHeight) * gravityDirection;
                     // Update the ray length so we don't look for any hits further than the current hit
+                    groundDistance = hit.distance;
                     rayLength = hit.distance;
                 }
 
@@ -161,14 +164,42 @@ public class SCR_PlayerController : MonoBehaviour
                 }
 #endif
             }
-            isGrounded = newIsGrounded;
-            if (!isGrounded)
+
+            // If are grounded
+            if (newIsGrounded)
+            {
+                // Update velocity to move us out of any penetration
+                velocity.y = 0.0f;
+                calculateMovement.y = (groundDistance - halfHeight) * gravityDirection;
+
+                // If we just became grounded
+                if (!isGrounded)
+                {
+                    // If a jump is queued in the buffer recently
+                    if (jumpQueued)
+                    {
+                        // If the jump was queued recently
+                        if (Time.time - jumpQueueTime <= jumpBufferTime)
+                        {
+                            Jump();
+                        }
+                        jumpQueued = false;
+                    }
+                }
+            }
+
+            // If we are not grounded, then apply the normal velocity
+            else
             {
                 calculateMovement.y = velocity.y * Time.deltaTime;
             }
+
+            // Update state
+            isGrounded = newIsGrounded;
         }
 
         // Otherwise we are not grounded
+        // Apply normal velocity
         else
         {
             isGrounded = false;
@@ -232,14 +263,31 @@ public class SCR_PlayerController : MonoBehaviour
     // Controls
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (context.performed && isGrounded)
+        if (context.performed)
         {
-            velocity.y += (jumpVelocityMax);
+            // If grounded, jump
+            if (isGrounded)
+            {
+                Jump();
+            }
+
+            // Otherwise, queue a jump
+            else
+            {
+                jumpQueued = true;
+                jumpQueueTime = Time.time;
+            }
         }
         else if (context.canceled && velocity.y > jumpVelocityMin)
         {
-            velocity.y = jumpVelocityMin;
+            velocity.y = jumpVelocityMin * -1.0f * gravityDirection;
         }
+        return;
+    }
+
+    void Jump()
+    {
+        velocity.y = jumpVelocityMax * -1.0f * gravityDirection;
         return;
     }
 
