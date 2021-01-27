@@ -332,6 +332,11 @@ public class SCR_PlayerController : MonoBehaviour
         return;
     }
 
+    public void FlipGravity()
+    {
+        gravitySign *= -1;
+    }
+
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2232333182446779651}
   - component: {fileID: 3725707468415919308}
+  - component: {fileID: 9123260558485340391}
   - component: {fileID: 1817163816175706379}
   - component: {fileID: 8374739330077031772}
   - component: {fileID: 6353376280126444291}
@@ -53,28 +54,10 @@ MonoBehaviour:
   horizontalRayCount: 5
   verticalRayCount: 5
   gravityMaxMagnitude: 20
-  gravityDirection: -1
-  AccelerationCurve:
+  gravitySign: -1
+  accelerationCurve:
     serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
+    m_Curve: []
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -85,6 +68,18 @@ MonoBehaviour:
   jumpWalkOffLedgeBufferTime: 0.1
   jumpDescentGravityMultiplier: 2
   debugPhysics: 1
+--- !u!114 &9123260558485340391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 937568922657786346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2d6d01080a4e804bb7abf452b25c02d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!61 &1817163816175706379
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -239,6 +234,22 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 4d97ff3e-da40-4f59-b40b-1958de0ced89
     m_ActionName: UI/RightClick[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 9123260558485340391}
+        m_TargetAssemblyTypeName: SCR_PlayerSwapController, Assembly-CSharp
+        m_MethodName: OnSwapDimensionInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 2e66c6f0-cbf7-40ba-bbfe-8925c8bfcd94
+    m_ActionName: Gameplay/Swap[/Keyboard/f]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Mouse & Keyboard
   m_DefaultActionMap: Gameplay
