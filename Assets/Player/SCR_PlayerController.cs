@@ -46,9 +46,9 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField]
     float walkMaxSpeed = 6.0f;
     [SerializeField]
-    float walkAccelerationTime = 0.5f;
+    float walkAccelerationTime = 0.3f;
     [SerializeField]
-    float walkDecelerationTime = 0.3f;
+    float walkDecelerationTime = 0.1f;
     [SerializeField]
     float walkAccelerationAirborneMultiplier = 0.5f;
     [SerializeField]
