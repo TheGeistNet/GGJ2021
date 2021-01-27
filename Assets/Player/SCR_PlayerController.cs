@@ -187,7 +187,7 @@ public class SCR_PlayerController : MonoBehaviour
                         walkDecelerationProgress = Mathf.Min(walkDecelerationProgress + ((Time.deltaTime / walkDecelerationTime) * walkDeceleratioAirbornenMultiplier), 1.0f);
                     }
                 }
-                velocity.x = Mathf.Min(Mathf.Abs(velocity.x), (Mathf.Abs(velocity.x) * (1 - .0f - walkDecelerationCurve.Evaluate(walkDecelerationProgress)) * walkMaxSpeed)) * Mathf.Sign(velocity.x);
+                velocity.x = Mathf.Sign(velocity.x) * (Mathf.Min((1.0f - walkDecelerationCurve.Evaluate(walkDecelerationProgress)) * walkMaxSpeed, Mathf.Abs(velocity.x)));
             }
         }
     }
