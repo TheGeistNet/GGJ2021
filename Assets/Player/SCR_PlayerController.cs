@@ -33,7 +33,7 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField]
     float gravityMaxMagnitude = 20.0f;
     [SerializeField]
-    float gravitySign = -1.0f;
+    float gravitySign = 1.0f;
     float gravityAccelerationDefault;
     float gravityAcceleration;
     bool isGrounded;
@@ -192,7 +192,7 @@ public class SCR_PlayerController : MonoBehaviour
     void ApplyGravity()
     {
         // If descending from a jump, apply descent gravity
-        if (velocity.y < 0.0f && jumpedRecently)
+        if (Mathf.Sign(velocity.y) == gravitySign && jumpedRecently)
         {
             velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime * jumpDescentGravityMultiplier), -gravityMaxMagnitude, gravityMaxMagnitude);
         }
@@ -230,7 +230,7 @@ public class SCR_PlayerController : MonoBehaviour
         }
 
         // If we were moving in the direction of gravity
-        if (Mathf.Sign(proposedVerticalMovement) == Mathf.Sign(gravitySign))
+        if (Mathf.Sign(proposedVerticalMovement) == gravitySign)
         {
             // If we are grounded
             if (didCollideWithObject)
@@ -433,6 +433,21 @@ public class SCR_PlayerController : MonoBehaviour
             velocity.y = jumpVelocityMin * -1.0f * gravitySign;
         }
         return;
+    }
+
+    public void InverseGravity()
+    {
+        gravitySign *= 1.0f;
+    }
+
+    public void SetGravityDown()
+    {
+        gravitySign = -1.0f;
+    }
+
+    public void SetGravityUp()
+    {
+        gravitySign = 1.0f;
     }
 
 
