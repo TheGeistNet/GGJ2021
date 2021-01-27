@@ -6,6 +6,7 @@ public class SCR_MainMenuButtons : MonoBehaviour
 {
     Canvas thisCanvas;
     public SCR_AudioOptionManager audioOptionsScript;
+    public SCR_ControlsRemapping controlsScript;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,6 +23,13 @@ public class SCR_MainMenuButtons : MonoBehaviour
     {
         print("play game!");
     }
+    
+    public void ControlsButton()
+    {
+        thisCanvas.enabled = false;
+        controlsScript.CanvasEnable();
+    }
+
     public void AudioOptionsButton()
     {
         thisCanvas.enabled = false;
