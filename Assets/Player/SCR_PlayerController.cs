@@ -58,8 +58,6 @@ public class SCR_PlayerController : MonoBehaviour
     AnimationCurve walkAccelerationCurve;
     [SerializeField]
     AnimationCurve walkDecelerationCurve;
-    AnimationCurve walkDecelerationInverseCurve;
-    AnimationCurve walkAccelerationInverseCurve;
     bool isWalking;
     float walkAxis;
     float lastWalkAxis;
@@ -95,8 +93,6 @@ public class SCR_PlayerController : MonoBehaviour
     // Use awake to initialize values
     void Awake()
     {
-        CreateInverseAnimationCurve(ref walkAccelerationCurve, ref walkAccelerationInverseCurve);
-        CreateInverseAnimationCurve(ref walkDecelerationCurve, ref walkDecelerationInverseCurve);
         CalculateGravity();
         CalculateJumpVelocities();
         CalculateBoundingBox();
@@ -108,18 +104,6 @@ public class SCR_PlayerController : MonoBehaviour
     private void FixedUpdate()
     {
         UpdateMovement();
-
-        return;
-    }
-
-    void CreateInverseAnimationCurve(ref AnimationCurve baseCurve, ref AnimationCurve outInverseCurve)
-    {
-        outInverseCurve = new AnimationCurve();
-        for (int idx = 0; idx < baseCurve.length; idx++)
-        {
-            Keyframe inverseKey = new Keyframe(baseCurve.keys[idx].value, baseCurve.keys[idx].time);
-            outInverseCurve.AddKey(inverseKey);
-        }
 
         return;
     }
@@ -422,13 +406,26 @@ public class SCR_PlayerController : MonoBehaviour
         {
             isWalking = true;
             walkAxis = context.ReadValue<float>();
-            walkAccelerationProgress = 1.0f - (walkDecelerationInverseCurve.Evaluate(walkDecelerationProgress));
+
+            // Get the walk deceleration scalar based on the walk acceleration progress
+            float walkDecelScalar = walkDecelerationCurve.Evaluate(walkDecelerationProgress);
+
+            // Lookup the opposite of the scalar on acceleration curve
+            walkDecelScalar = 1.0f - walkDecelScalar;
+            walkAccelerationProgress = GetCurveTimeForValue(walkAccelerationCurve, walkDecelScalar, 10);
+
             walkDecelerationProgress = 0.0f;
         }
         else if (context.canceled)
         {
             isWalking = false;
-            walkDecelerationProgress = 1.0f - (walkAccelerationInverseCurve.Evaluate(walkAccelerationProgress));
+            // Get the walk deceleration scalar based on the walk deceleration progress;
+            float walkAccelScalar = walkAccelerationCurve.Evaluate(walkAccelerationProgress);
+
+            // Lookup the opposite of the scalar on deceleration
+            walkAccelScalar = 1.0f - walkAccelScalar;
+            walkDecelerationProgress = GetCurveTimeForValue(walkDecelerationCurve, walkAccelScalar, 10);
+
             walkAccelerationProgress = 0.0f;
         }
         else
@@ -468,6 +465,35 @@ public class SCR_PlayerController : MonoBehaviour
             velocity.y = jumpVelocityMin * -1.0f * gravitySign;
         }
         return;
+    }
+
+    float GetCurveTimeForValue(AnimationCurve curveToCheck, float value, int accuracy)
+    {
+
+        float startTime = curveToCheck.keys[0].time;
+        float endTime = curveToCheck.keys[curveToCheck.length - 1].time;
+        float nearestTime = startTime;
+        float step = endTime - startTime;
+
+        for (int i = 0; i < accuracy; i++)
+        {
+
+            float valueAtNearestTime = curveToCheck.Evaluate(nearestTime);
+            float distanceToValueAtNearestTime = Mathf.Abs(value - valueAtNearestTime);
+
+            float timeToCompare = nearestTime + step;
+            float valueAtTimeToCompare = curveToCheck.Evaluate(timeToCompare);
+            float distanceToValueAtTimeToCompare = Mathf.Abs(value - valueAtTimeToCompare);
+
+            if (distanceToValueAtTimeToCompare < distanceToValueAtNearestTime)
+            {
+                nearestTime = timeToCompare;
+                valueAtNearestTime = valueAtTimeToCompare;
+            }
+            step = Mathf.Abs(step * 0.5f) * Mathf.Sign(value - valueAtNearestTime);
+        }
+
+        return nearestTime;
     }
 
     public void InvertGravity()
