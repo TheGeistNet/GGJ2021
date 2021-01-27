@@ -5,7 +5,7 @@ public enum eSwapType
 
 public delegate void OnSwapCallbackDelegate(eSwapType type);
 
-public interface INT_SwapObserver
+public interface SCR_ISwapObserver
 {
     void DoSwap(eSwapType type);
 }

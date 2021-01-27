@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class SCR_PlayerSwapController : SCR_SwapObserverBase
+public class SCR_PlayerSwapController : SCR_DimensionSwapObserverBase
 {
     private SCR_PlayerController m_PlayerController;
 
@@ -12,11 +12,12 @@ public class SCR_PlayerSwapController : SCR_SwapObserverBase
         base.Awake();
         m_PlayerController = GetComponent<SCR_PlayerController>();
     }
+
     public override void DoSwap(eSwapType type)
     {
         if(type == eSwapType.SWAP_TYPE_GRAVITY)
         {
-            m_PlayerController.FlipGravity();
+            m_PlayerController.InvertGravity();
         }
     }
 

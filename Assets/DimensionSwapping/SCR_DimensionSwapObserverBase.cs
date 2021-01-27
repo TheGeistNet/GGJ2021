@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class SCR_SwapObserverBase : MonoBehaviour, INT_SwapObserver
+public abstract class SCR_DimensionSwapObserverBase : MonoBehaviour, SCR_ISwapObserver
 {
     public abstract void DoSwap(eSwapType type);
 
