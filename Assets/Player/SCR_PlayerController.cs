@@ -38,8 +38,7 @@ public class SCR_PlayerController : MonoBehaviour
     float gravityMaxMagnitude = 20.0f;
     [SerializeField]
     float gravityDirection = -1.0f;
-    [SerializeField, Min(1.0f)]
-    float gravityFallingMultiplier = 2.0f;
+
     float gravityAccelerationDefault;
     float gravityAcceleration;
     bool isGrounded;
@@ -57,11 +56,17 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField, Min (0.1f)]
     float jumpHeightMin = 1.0f;
     [SerializeField, Min(0.0f)]
-    float jumpBufferTime = 0.1f;
+    float jumpLandingBufferTime = 0.1f;
+    [SerializeField]
+    float jumpWalkOffLedgeBufferTime = 0.1f;
+    [SerializeField, Min(1.0f)]
+    float jumpDescentGravityMultiplier = 2.0f;
     float jumpVelocityMax;
     float jumpVelocityMin;
-    bool jumpQueued;
-    float jumpQueueTime;
+    bool jumpLandingQueued;
+    float jumpLandingQueuedTime;
+    float jumpWalkedOffLedgeTimeStamp;
+    bool jumpedRecently;
 
     // Debug variables
 #if UNITY_EDITOR
@@ -106,17 +111,19 @@ public class SCR_PlayerController : MonoBehaviour
 
     void ApplyGravity()
     {
-        // If not falling, apply normal gravity
-        if (velocity.y >= 0.0f)
+        // If descending from a jump, apply descent gravity
+        if (velocity.y < 0.0f && jumpedRecently)
+        {
+            velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravityDirection * Time.deltaTime * jumpDescentGravityMultiplier), -gravityMaxMagnitude, gravityMaxMagnitude);
+        }
+
+        // Otherwise, apply normal gravity
+        else
         {
             velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravityDirection * Time.deltaTime), -gravityMaxMagnitude, gravityMaxMagnitude);
         }
 
-        // Otherwise, apply falling gravity
-        else
-        {
-            velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravityDirection * Time.deltaTime * gravityFallingMultiplier), -gravityMaxMagnitude, gravityMaxMagnitude);
-        }
+        return;
     }
 
     void UpdateVerticalCollisions()
@@ -175,23 +182,34 @@ public class SCR_PlayerController : MonoBehaviour
                 // If we just became grounded
                 if (!isGrounded)
                 {
+                    jumpedRecently = false;
+
                     // If a jump is queued in the buffer recently
-                    if (jumpQueued)
+                    if (jumpLandingQueued)
                     {
                         // If the jump was queued recently
-                        if (Time.time - jumpQueueTime <= jumpBufferTime)
+                        if (Time.time - jumpLandingQueuedTime <= jumpLandingBufferTime)
                         {
                             Jump();
                         }
-                        jumpQueued = false;
+                        jumpLandingQueued = false;
                     }
                 }
             }
 
-            // If we are not grounded, then apply the normal velocity
+            // If we are not grounded
             else
             {
+                // Apply normal gravity
                 calculateMovement.y = velocity.y * Time.deltaTime;
+
+                // If we just stopped being grounded
+                if (isGrounded)
+                {
+                    // We know it wasn't a jump because our velocity is < 0.0f
+                    // Cache the walk off ledge time
+                    jumpWalkedOffLedgeTimeStamp = Time.time;
+                }
             }
 
             // Update state
@@ -271,11 +289,17 @@ public class SCR_PlayerController : MonoBehaviour
                 Jump();
             }
 
-            // Otherwise, queue a jump
+            // Otherwise, check if we just walked off the ledge
+            else if (!jumpedRecently && Time.time - jumpWalkedOffLedgeTimeStamp <= jumpWalkOffLedgeBufferTime)
+            {
+                Jump();
+            }
+
+            // Otherwise, queue a jump in case we land soon
             else
             {
-                jumpQueued = true;
-                jumpQueueTime = Time.time;
+                jumpLandingQueued = true;
+                jumpLandingQueuedTime = Time.time;
             }
         }
         else if (context.canceled && velocity.y > jumpVelocityMin)
@@ -288,6 +312,7 @@ public class SCR_PlayerController : MonoBehaviour
     void Jump()
     {
         velocity.y = jumpVelocityMax * -1.0f * gravityDirection;
+        jumpedRecently = true;
         return;
     }
 
