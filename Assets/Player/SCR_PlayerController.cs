@@ -33,7 +33,8 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField]
     float gravityMaxMagnitude = 20.0f;
     [SerializeField]
-    float gravitySign = 1.0f;
+    bool startWithInversedGravity;
+    float gravitySign = -1.0f;
     float gravityAccelerationDefault;
     float gravityAcceleration;
     bool isGrounded;
@@ -329,6 +330,10 @@ public class SCR_PlayerController : MonoBehaviour
 
     void CalculateGravity()
     {
+        if (startWithInversedGravity)
+        {
+            gravitySign = 1.0f;
+        }
         gravityAccelerationDefault = (2.0f * jumpHeightMax) / Mathf.Pow(jumpTimeToApex, 2.0f);
         gravityAcceleration = gravityAccelerationDefault;
         return;
@@ -428,7 +433,9 @@ public class SCR_PlayerController : MonoBehaviour
                 jumpLandingQueuedTime = Time.time;
             }
         }
-        else if (context.canceled && velocity.y > jumpVelocityMin)
+
+        // Set jump velocity
+        else if (context.canceled && Mathf.Abs(velocity.y) > jumpVelocityMin)
         {
             velocity.y = jumpVelocityMin * -1.0f * gravitySign;
         }
