@@ -33,8 +33,8 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField]
     float gravityMaxMagnitude = 20.0f;
     [SerializeField]
+    bool startWithInversedGravity;
     float gravitySign = -1.0f;
-
     float gravityAccelerationDefault;
     float gravityAcceleration;
     bool isGrounded;
@@ -45,8 +45,26 @@ public class SCR_PlayerController : MonoBehaviour
 
     [Header("Walking")]
     [SerializeField]
-    AnimationCurve accelerationCurve;
-    float accelerationProgress;
+    float walkMaxSpeed = 6.0f;
+    [SerializeField]
+    float walkAccelerationTime = 0.3f;
+    [SerializeField]
+    float walkDecelerationTime = 0.1f;
+    [SerializeField]
+    float walkAccelerationAirborneMultiplier = 0.5f;
+    [SerializeField]
+    float walkDeceleratioAirbornenMultiplier = 0.5f;
+    [SerializeField]
+    AnimationCurve walkAccelerationCurve;
+    [SerializeField]
+    AnimationCurve walkDecelerationCurve;
+    AnimationCurve walkDecelerationInverseCurve;
+    AnimationCurve walkAccelerationInverseCurve;
+    bool isWalking;
+    float walkAxis;
+    float lastWalkAxis;
+    float walkAccelerationProgress;
+    float walkDecelerationProgress = 1.0f;
 
     [Header("Jumping")]
     [SerializeField]
@@ -77,6 +95,8 @@ public class SCR_PlayerController : MonoBehaviour
     // Use awake to initialize values
     void Awake()
     {
+        CreateInverseAnimationCurve(ref walkAccelerationCurve, ref walkAccelerationInverseCurve);
+        CreateInverseAnimationCurve(ref walkDecelerationCurve, ref walkDecelerationInverseCurve);
         CalculateGravity();
         CalculateJumpVelocities();
         CalculateBoundingBox();
@@ -92,10 +112,25 @@ public class SCR_PlayerController : MonoBehaviour
         return;
     }
 
+    void CreateInverseAnimationCurve(ref AnimationCurve baseCurve, ref AnimationCurve outInverseCurve)
+    {
+        outInverseCurve = new AnimationCurve();
+        for (int idx = 0; idx < baseCurve.length; idx++)
+        {
+            Keyframe inverseKey = new Keyframe(baseCurve.keys[idx].value, baseCurve.keys[idx].time);
+            outInverseCurve.AddKey(inverseKey);
+        }
+
+        return;
+    }
+
     void UpdateMovement()
     {
         // Update origin
         origin = boundingCollider.bounds.center;
+
+        // Apply walking input
+        ApplyWalking();
 
         // Calculate new gravity
         ApplyGravity();
@@ -104,15 +139,61 @@ public class SCR_PlayerController : MonoBehaviour
         UpdateVerticalCollisions();
 
         // Move the character
+        calculateMovement.x = velocity.x * Time.deltaTime;
         transform.Translate(calculateMovement);
 
         return;
     }
 
+    void ApplyWalking()
+    {
+        if (isWalking)
+        {
+            float walkDirection = Mathf.Sign(walkAxis);
+            if (Mathf.Sign(lastWalkAxis) != walkDirection)
+            {
+                walkAccelerationProgress = 0.0f;
+            }
+
+            float maxAcelerationProgress = Mathf.Abs(walkAxis);
+            if (walkAccelerationProgress < maxAcelerationProgress)
+            {
+                if (isGrounded)
+                {
+                    walkAccelerationProgress = Mathf.Min(walkAccelerationProgress + (Time.deltaTime / walkAccelerationTime), maxAcelerationProgress);
+                }
+                else
+                {
+                    walkAccelerationProgress = Mathf.Min(walkAccelerationProgress + ((Time.deltaTime / walkAccelerationTime) * walkAccelerationAirborneMultiplier), maxAcelerationProgress);
+                }
+            }
+            velocity.x = walkDirection * (Mathf.Max(walkAccelerationCurve.Evaluate(walkAccelerationProgress) * walkMaxSpeed, Mathf.Abs(velocity.x)));
+            lastWalkAxis = walkAxis;
+        }
+        else
+        {
+            if (Mathf.Abs(velocity.x) > 0.0f)
+            {
+                if (walkDecelerationProgress < 1.0f)
+                {
+                    if (isGrounded)
+                    {
+                        walkDecelerationProgress = Mathf.Min(walkDecelerationProgress + (Time.deltaTime / walkDecelerationTime), 1.0f);
+                    }
+                    else
+                    {
+                        walkDecelerationProgress = Mathf.Min(walkDecelerationProgress + ((Time.deltaTime / walkDecelerationTime) * walkDeceleratioAirbornenMultiplier), 1.0f);
+                    }
+                }
+                velocity.x = Mathf.Min(Mathf.Abs(velocity.x), (Mathf.Abs(velocity.x) * (1 - .0f - walkDecelerationCurve.Evaluate(walkDecelerationProgress)) * walkMaxSpeed)) * Mathf.Sign(velocity.x);
+            }
+        }
+    }
+
     void ApplyGravity()
     {
         // If descending from a jump, apply descent gravity
-        if (velocity.y < 0.0f && jumpedRecently)
+        if (Mathf.Sign(velocity.y) == gravitySign && jumpedRecently)
         {
             velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime * jumpDescentGravityMultiplier), -gravityMaxMagnitude, gravityMaxMagnitude);
         }
@@ -150,7 +231,7 @@ public class SCR_PlayerController : MonoBehaviour
         }
 
         // If we were moving in the direction of gravity
-        if (Mathf.Sign(proposedVerticalMovement) == Mathf.Sign(gravitySign))
+        if (Mathf.Sign(proposedVerticalMovement) == gravitySign)
         {
             // If we are grounded
             if (didCollideWithObject)
@@ -249,6 +330,10 @@ public class SCR_PlayerController : MonoBehaviour
 
     void CalculateGravity()
     {
+        if (startWithInversedGravity)
+        {
+            gravitySign = 1.0f;
+        }
         gravityAccelerationDefault = (2.0f * jumpHeightMax) / Mathf.Pow(jumpTimeToApex, 2.0f);
         gravityAcceleration = gravityAccelerationDefault;
         return;
@@ -294,6 +379,36 @@ public class SCR_PlayerController : MonoBehaviour
         return;
     }
 
+    // Jump function
+    void Jump()
+    {
+        velocity.y = jumpVelocityMax * -1.0f * gravitySign;
+        jumpedRecently = true;
+        return;
+    }
+
+    // Walking
+    public void OnWalk(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            isWalking = true;
+            walkAxis = context.ReadValue<float>();
+            walkAccelerationProgress = 1.0f - (walkDecelerationInverseCurve.Evaluate(walkDecelerationProgress));
+            walkDecelerationProgress = 0.0f;
+        }
+        else if (context.canceled)
+        {
+            isWalking = false;
+            walkDecelerationProgress = 1.0f - (walkAccelerationInverseCurve.Evaluate(walkAccelerationProgress));
+            walkAccelerationProgress = 0.0f;
+        }
+        else
+        {
+            walkAxis = context.ReadValue<float>();
+        }
+    }
+
     // Controls
     public void OnJump(InputAction.CallbackContext context)
     {
@@ -318,24 +433,30 @@ public class SCR_PlayerController : MonoBehaviour
                 jumpLandingQueuedTime = Time.time;
             }
         }
-        else if (context.canceled && velocity.y > jumpVelocityMin)
+
+        // Set jump velocity
+        else if (context.canceled && Mathf.Abs(velocity.y) > jumpVelocityMin)
         {
             velocity.y = jumpVelocityMin * -1.0f * gravitySign;
         }
         return;
     }
 
-    void Jump()
+    public void InverseGravity()
     {
-        velocity.y = jumpVelocityMax * -1.0f * gravitySign;
-        jumpedRecently = true;
-        return;
+        gravitySign *= 1.0f;
     }
 
-    public void FlipGravity()
+    public void SetGravityDown()
     {
-        gravitySign *= -1;
+        gravitySign = -1.0f;
     }
+
+    public void SetGravityUp()
+    {
+        gravitySign = 1.0f;
+    }
+
 
 #if UNITY_EDITOR
     private void OnDrawGizmos()
