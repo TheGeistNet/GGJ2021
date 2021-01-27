@@ -291,7 +291,83 @@ PrefabInstance:
       value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkAccelerationTime
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationTime
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
       propertyPath: startWithInversedGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[0].time
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[0].value
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[1].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkAccelerationCurve.m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkAccelerationCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[1].inSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkAccelerationCurve.m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkAccelerationCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[1].inWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[1].outSlope
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[0].outWeight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkAccelerationCurve.m_Curve.Array.data[0].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkAccelerationCurve.m_Curve.Array.data[1].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[0].tangentMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: walkDecelerationCurve.m_Curve.Array.data[1].tangentMode
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
