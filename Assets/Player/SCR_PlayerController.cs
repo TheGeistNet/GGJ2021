@@ -470,9 +470,9 @@ public class SCR_PlayerController : MonoBehaviour
         return;
     }
 
-    public void InverseGravity()
+    public void InvertGravity()
     {
-        gravitySign *= 1.0f;
+        gravitySign *= -1.0f;
     }
 
     public void SetGravityDown()
