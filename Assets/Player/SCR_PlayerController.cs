@@ -15,7 +15,7 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField]
     BoxCollider2D boundingCollider;
     [SerializeField]
-    const float skinWidth = 0.03f;
+    const float skinWidth = 0.015f;
     Bounds boundingBox;
     Vector2 origin;
     float halfWidth;
@@ -41,7 +41,7 @@ public class SCR_PlayerController : MonoBehaviour
     bool isCollidingRight;
     bool isCollidingLeft;
     Vector2 velocity;
-    Vector2 calculateMovement;
+    Vector2 calculatedMovement;
 
     [Header("Walking")]
     [SerializeField]
@@ -136,11 +136,13 @@ public class SCR_PlayerController : MonoBehaviour
         ApplyGravity();
 
         // Handle collisions
+        UpdateHorizontalCollisions();
+        origin.x += calculatedMovement.x;
+
         UpdateVerticalCollisions();
 
         // Move the character
-        calculateMovement.x = velocity.x * Time.deltaTime;
-        transform.Translate(calculateMovement);
+        transform.Translate(calculatedMovement);
 
         return;
     }
@@ -207,6 +209,30 @@ public class SCR_PlayerController : MonoBehaviour
         return;
     }
 
+    void UpdateHorizontalCollisions()
+    {
+        // Cache the proposed horizontal movement
+        float proposedHorizontalMovement = velocity.x * Time.deltaTime;
+
+        // Trace to check if we will collide wit a wallk
+        float hitDistance = 0.0f;
+        float traceSign = Mathf.Sign(velocity.x);
+        bool didCollideWithObject = TraceForCollisions(halfWidth + Mathf.Abs(proposedHorizontalMovement), new Vector2(traceSign, 0.0f), origin, ref horizontalRayOrigins, ref hitDistance);
+
+        // If we collided with an object
+        if (didCollideWithObject)
+        {
+            // Update velocity and move us out of any penetration
+            velocity.x = 0.0f;
+            calculatedMovement.x = (hitDistance - halfWidth) * traceSign;
+        }
+        else
+        {
+            // Apply normal velocity
+            calculatedMovement.x = proposedHorizontalMovement;
+        }
+    }
+
     void UpdateVerticalCollisions()
     {
         // Cache the proposed vertical movement
@@ -222,12 +248,12 @@ public class SCR_PlayerController : MonoBehaviour
         {
             // Update velocity and move us out of any penetration
             velocity.y = 0.0f;
-            calculateMovement.y = (hitDistance - halfHeight) * traceSign;
+            calculatedMovement.y = (hitDistance - halfHeight) * traceSign;
         }
         else
         {
             // Apply normal velocity
-            calculateMovement.y = velocity.y * Time.deltaTime;
+            calculatedMovement.y = proposedVerticalMovement;
         }
 
         // If we were moving in the direction of gravity
@@ -277,7 +303,7 @@ public class SCR_PlayerController : MonoBehaviour
         else
         {
             // If we were on the ground and moved away
-            if (isGrounded && Mathf.Sign(calculateMovement.y) != gravitySign)
+            if (isGrounded && Mathf.Sign(calculatedMovement.y) != gravitySign)
             {
                 isGrounded = false;
             }
@@ -319,7 +345,7 @@ public class SCR_PlayerController : MonoBehaviour
 #if UNITY_EDITOR
             else if (debugPhysics)
             {
-                Debug.DrawRay(rayOrigin + origin, Vector2.up * gravitySign * rayLength, Color.cyan);
+                Debug.DrawRay(rayOrigin + origin, traceDirection * rayLength, Color.cyan);
             }
 #endif
         }
@@ -358,22 +384,24 @@ public class SCR_PlayerController : MonoBehaviour
 
     void CalculateRayOrigins()
     {
-        float horizontalRaySpacing = boundingBox.size.y / (float)(horizontalRayCount - 1);
-        float verticalRaySpacing = boundingBox.size.x / (float)(verticalRayCount - 1);
+        float horizontalRayCoverage = halfHeight - skinWidth;
+        float horizontalRaySpacing = (horizontalRayCoverage * 2.0f) / (float)(horizontalRayCount - 1);
+        float verticalRayCoverage = halfWidth - skinWidth;
+        float verticalRaySpacing = (verticalRayCoverage * 2.0f) / (float)(verticalRayCount - 1);
 
         // Calculate horizontal ray origins
         horizontalRayOrigins.Clear();
 
         for (int idx = 0; idx < horizontalRayCount; idx++)
         {
-            horizontalRayOrigins.Add(new Vector2(0.0f, ((float)idx * horizontalRaySpacing) - halfHeight));
+            horizontalRayOrigins.Add(new Vector2(0.0f, ((float)idx * horizontalRaySpacing) - horizontalRayCoverage));
         }
 
         // Calculate vertical ray origins
         verticalRayOrigins.Clear();
         for (int idx = 0; idx < verticalRayCount; idx++)
         {
-            verticalRayOrigins.Add(new Vector2(((float)idx * verticalRaySpacing) - halfWidth, 0.0f));
+            verticalRayOrigins.Add(new Vector2(((float)idx * verticalRaySpacing) - verticalRayCoverage, 0.0f));
         }
 
         return;
