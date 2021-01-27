@@ -54,11 +54,36 @@ MonoBehaviour:
   verticalRayCount: 5
   gravityMaxMagnitude: 20
   gravityDirection: -1
-  gravityFallingMultiplier: 2
+  AccelerationCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   jumpTimeToApex: 0.6
   jumpHeightMax: 3
   jumpHeightMin: 1
-  jumpBufferTime: 0.1
+  jumpLandingBufferTime: 0.1
+  jumpWalkOffLedgeBufferTime: 0.1
+  jumpDescentGravityMultiplier: 2
   debugPhysics: 1
 --- !u!61 &1817163816175706379
 BoxCollider2D:

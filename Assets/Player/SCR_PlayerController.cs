@@ -17,10 +17,6 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField]
     const float skinWidth = 0.03f;
     Bounds boundingBox;
-    Vector2 bottomRightLocal;
-    Vector2 bottomLeftLocal;
-    Vector2 topRightLocal;
-    Vector2 topLeftLocal;
     Vector2 origin;
     float halfWidth;
     float halfHeight;
@@ -37,7 +33,7 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField]
     float gravityMaxMagnitude = 20.0f;
     [SerializeField]
-    float gravityDirection = -1.0f;
+    float gravitySign = -1.0f;
 
     float gravityAccelerationDefault;
     float gravityAcceleration;
@@ -47,7 +43,11 @@ public class SCR_PlayerController : MonoBehaviour
     Vector2 velocity;
     Vector2 calculateMovement;
 
-    [Header("Controls")]
+    [Header("Walking")]
+    [SerializeField]
+    AnimationCurve accelerationCurve;
+    float accelerationProgress;
+
     [Header("Jumping")]
     [SerializeField]
     float jumpTimeToApex = 0.6f;
@@ -114,13 +114,13 @@ public class SCR_PlayerController : MonoBehaviour
         // If descending from a jump, apply descent gravity
         if (velocity.y < 0.0f && jumpedRecently)
         {
-            velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravityDirection * Time.deltaTime * jumpDescentGravityMultiplier), -gravityMaxMagnitude, gravityMaxMagnitude);
+            velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime * jumpDescentGravityMultiplier), -gravityMaxMagnitude, gravityMaxMagnitude);
         }
 
         // Otherwise, apply normal gravity
         else
         {
-            velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravityDirection * Time.deltaTime), -gravityMaxMagnitude, gravityMaxMagnitude);
+            velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime), -gravityMaxMagnitude, gravityMaxMagnitude);
         }
 
         return;
@@ -131,54 +131,30 @@ public class SCR_PlayerController : MonoBehaviour
         // Cache the proposed vertical movement
         float proposedVerticalMovement = velocity.y * Time.deltaTime;
 
-        // If we are moving in the direction of gravity
-        if (Mathf.Sign(proposedVerticalMovement) == Mathf.Sign(gravityDirection))
+        // Trace to check if we are grounded
+        float hitDistance = 0.0f;
+        float traceSign = Mathf.Sign(velocity.y);
+        bool didCollideWithObject = TraceForCollisions(halfHeight + Mathf.Abs(proposedVerticalMovement), new Vector2(0.0f, traceSign), origin, ref verticalRayOrigins, ref hitDistance);
+
+        // If we collided with an object
+        if (didCollideWithObject)
         {
-            // Check if we are grounded
-            bool newIsGrounded = false;
-            RaycastHit2D hit;
-            float rayLength = halfHeight + Mathf.Abs(proposedVerticalMovement);
-            float groundDistance = 0.0f;
+            // Update velocity and move us out of any penetration
+            velocity.y = 0.0f;
+            calculateMovement.y = (hitDistance - halfHeight) * traceSign;
+        }
+        else
+        {
+            // Apply normal velocity
+            calculateMovement.y = velocity.y * Time.deltaTime;
+        }
 
-            // Raycast in the direction of gravity
-            foreach (Vector2 rayOrigin in verticalRayOrigins)
+        // If we were moving in the direction of gravity
+        if (Mathf.Sign(proposedVerticalMovement) == Mathf.Sign(gravitySign))
+        {
+            // If we are grounded
+            if (didCollideWithObject)
             {
-                hit = Physics2D.Raycast(rayOrigin + origin, Vector2.up * gravityDirection, rayLength, collisionMask);
-
-                // If raycast hit a target
-                if (hit.collider)
-                {
-
-#if UNITY_EDITOR
-                    if (debugPhysics)
-                    {
-                        Debug.DrawLine(rayOrigin + origin, hit.point, Color.yellow);
-                        hitPoints.Add(hit.point);
-                    }
-#endif
-                    // Update new is grounded
-                    newIsGrounded = true;
-
-                    // Update the ray length so we don't look for any hits further than the current hit
-                    groundDistance = hit.distance;
-                    rayLength = hit.distance;
-                }
-
-#if UNITY_EDITOR
-                else if (debugPhysics)
-                {
-                    Debug.DrawRay(rayOrigin + origin, Vector2.up * gravityDirection * rayLength, Color.cyan);
-                }
-#endif
-            }
-
-            // If are grounded
-            if (newIsGrounded)
-            {
-                // Update velocity to move us out of any penetration
-                velocity.y = 0.0f;
-                calculateMovement.y = (groundDistance - halfHeight) * gravityDirection;
-
                 // If we just became grounded
                 if (!isGrounded)
                 {
@@ -195,14 +171,14 @@ public class SCR_PlayerController : MonoBehaviour
                         jumpLandingQueued = false;
                     }
                 }
+
+                // Update state
+                isGrounded = true;
             }
 
-            // If we are not grounded
+            // Otherwise, if we are not grounded
             else
             {
-                // Apply normal gravity
-                calculateMovement.y = velocity.y * Time.deltaTime;
-
                 // If we just stopped being grounded
                 if (isGrounded)
                 {
@@ -210,21 +186,65 @@ public class SCR_PlayerController : MonoBehaviour
                     // Cache the walk off ledge time
                     jumpWalkedOffLedgeTimeStamp = Time.time;
                 }
-            }
 
-            // Update state
-            isGrounded = newIsGrounded;
+                // Update state
+                isGrounded = false;
+            }
         }
 
-        // Otherwise we are not grounded
-        // Apply normal velocity
+        // Otherwise, if we were moving away from gravity
         else
         {
-            isGrounded = false;
-            calculateMovement.y = velocity.y * Time.deltaTime;
+            // If we were on the ground and moved away
+            if (isGrounded && Mathf.Sign(calculateMovement.y) != gravitySign)
+            {
+                isGrounded = false;
+            }
         }
 
         return;
+    }
+
+    bool TraceForCollisions(float traceDistance, Vector2 traceDirection, Vector2 traceOrigin, ref List<Vector2> rayOrigins, ref float outHitDistance)
+    {
+        // Initialize variables
+        bool didTraceHitObject = false;
+        RaycastHit2D hit;
+        float rayLength = traceDistance;
+
+        // Raycast in the direction of gravity
+        foreach (Vector2 rayOrigin in rayOrigins)
+        {
+            hit = Physics2D.Raycast(rayOrigin + traceOrigin, traceDirection, rayLength, collisionMask);
+
+            // If raycast hit a target
+            if (hit.collider)
+            {
+                // Update new is grounded
+                didTraceHitObject = true;
+
+                // Update the ray length so we don't look for any hits further than the current hit
+                rayLength = hit.distance;
+
+#if UNITY_EDITOR
+                if (debugPhysics)
+                {
+                    Debug.DrawLine(rayOrigin + origin, hit.point, Color.yellow);
+                    hitPoints.Add(hit.point);
+                }
+#endif
+            }
+
+#if UNITY_EDITOR
+            else if (debugPhysics)
+            {
+                Debug.DrawRay(rayOrigin + origin, Vector2.up * gravitySign * rayLength, Color.cyan);
+            }
+#endif
+        }
+
+        outHitDistance = rayLength;
+        return didTraceHitObject;
     }
 
     void CalculateGravity()
@@ -247,10 +267,6 @@ public class SCR_PlayerController : MonoBehaviour
         boundingBox = boundingCollider.bounds;
         halfWidth = boundingBox.size.x * 0.5f;
         halfHeight = boundingBox.size.y * 0.5f;
-        bottomRightLocal = new Vector2(halfWidth, -halfHeight);
-        bottomLeftLocal = new Vector2(-halfWidth, -halfHeight);
-        topRightLocal = new Vector2(halfWidth, halfHeight);
-        topLeftLocal = new Vector2(-halfWidth, halfHeight);
 
         return;
     }
@@ -304,14 +320,14 @@ public class SCR_PlayerController : MonoBehaviour
         }
         else if (context.canceled && velocity.y > jumpVelocityMin)
         {
-            velocity.y = jumpVelocityMin * -1.0f * gravityDirection;
+            velocity.y = jumpVelocityMin * -1.0f * gravitySign;
         }
         return;
     }
 
     void Jump()
     {
-        velocity.y = jumpVelocityMax * -1.0f * gravityDirection;
+        velocity.y = jumpVelocityMax * -1.0f * gravitySign;
         jumpedRecently = true;
         return;
     }
