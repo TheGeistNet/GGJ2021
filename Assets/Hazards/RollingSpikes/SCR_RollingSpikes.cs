@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
 {
-    public int m_DamageAmount;
+    public int m_DamageAmount = 1;
 
     private Rigidbody2D m_RigidBody;
     private ConstantForce2D m_GravitySimulator;
