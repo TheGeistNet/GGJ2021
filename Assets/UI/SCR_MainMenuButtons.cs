@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SCR_MainMenuButtons : MonoBehaviour
 {
@@ -20,7 +21,7 @@ public class SCR_MainMenuButtons : MonoBehaviour
 
     public void PlayButton()
     {
-        print("play game!");
+        SceneManager.LoadScene(1);
     }
     public void AudioOptionsButton()
     {
