@@ -405,6 +405,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0a92d8eda14e1f4d9f45c6039a79273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerInputAsset: {fileID: -944628639613478452, guid: 48fc8dfcf5de2c04abc108dfab238aaa, type: 3}
   audioOptionsScript: {fileID: 0}
   controlsScript: {fileID: 0}
 --- !u!1 &2629455970759479604

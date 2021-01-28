@@ -9,11 +9,13 @@ public class SCR_InGameMenuButtons : MonoBehaviour
     public Canvas hudCanvas;
     public SCR_ControlsRemapping controlsScript;
     public SCR_AudioOptionManager audioOptionsScript;
+    SCR_PlayerUI player;
 
     // Start is called before the first frame update
     void Start()
     {
         thisCanvas = GetComponent<Canvas>();
+        player = FindObjectOfType<SCR_PlayerUI>();
     }
 
     // Update is called once per frame
@@ -25,6 +27,7 @@ public class SCR_InGameMenuButtons : MonoBehaviour
     {
         thisCanvas.enabled = false;
         hudCanvas.enabled = true;
+        player.ReturnToGame();
     }
 
     public void ControlsButton()

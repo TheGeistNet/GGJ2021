@@ -8,8 +8,10 @@ public class SCR_PlayerUI : MonoBehaviour
     SCR_HUDButtons hudButtons;
     bool runMenuSwitch = true;
     PlayerInput player;
-    public InputActionAsset playerInputSettings;
     // Start is called before the first frame update
+    private void Awake()
+    {
+    }
     void Start()
     {
         hudButtons = FindObjectOfType<SCR_HUDButtons>();
@@ -24,18 +26,16 @@ public class SCR_PlayerUI : MonoBehaviour
 
     public void OnMenu(InputAction.CallbackContext context)
     {
-        if (context.performed && runMenuSwitch)
+        if (context.started && runMenuSwitch)
         {
             hudButtons.OpenInGameMenu();
-            //player.SwitchCurrentActionMap("UI");
             runMenuSwitch = false;
-            print(player.currentActionMap);
+            player.enabled = false;
         }
     }
     public void ReturnToGame()
     {
-        //player.SwitchCurrentActionMap("Gameplay");
         runMenuSwitch = true;
-        print(player.currentActionMap);
+        player.enabled = true;
     }
 }
