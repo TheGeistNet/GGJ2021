@@ -26,16 +26,18 @@ public class SCR_StaticSpikes : MonoBehaviour
     public void LayoutSingleSpikes()
     {
         List<Transform> toDel = new List<Transform>();
-        foreach(Transform child in transform)
+        foreach (Transform child in transform)
         {
             toDel.Add(child);
         }
         toDel.ForEach((Transform t) => { DestroyImmediate(t.gameObject); });
         Vector3 selfPos = transform.position;
-        for(int x = 0; x < m_AmountInStrip; ++x)
+        float angle = transform.rotation.eulerAngles.z;
+        Vector3 direction = Quaternion.Euler(0, 0, angle) * new Vector3(0.5f, 0, 0);
+        for (int x = 0; x < m_AmountInStrip; ++x)
         {
             GameObject inst = Instantiate(m_SingleSpikePrefab, transform);
-            inst.transform.position = new Vector3(selfPos.x + x * 0.5f, selfPos.y, selfPos.z);
+            inst.transform.position = transform.position + direction * x;
         }
     }
 }
