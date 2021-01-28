@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase
+public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
 {
     public int m_DamageAmount;
 

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5517659782830050369}
   - component: {fileID: 7386798295479403947}
   - component: {fileID: 4285302749694315830}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: PF_RollingSpikes
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,7 +109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8640209786419663666}
   - component: {fileID: 4789357375421213261}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DiagnolSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -191,7 +191,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8138110517294520963}
   - component: {fileID: 1580542547583421584}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: HorizontalSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -273,7 +273,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4770367504892401250}
   - component: {fileID: 3796985059492325867}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: VerticalSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -355,7 +355,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5025963201935798958}
   - component: {fileID: 4900162127485264013}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: DiagnolSprite (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

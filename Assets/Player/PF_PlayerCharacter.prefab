@@ -396,6 +396,22 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: 2e66c6f0-cbf7-40ba-bbfe-8925c8bfcd94
     m_ActionName: Gameplay/Swap[/Keyboard/f]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 376992284}
+        m_TargetAssemblyTypeName: SCR_PlayerDeath, Assembly-CSharp
+        m_MethodName: OnQuickRestart
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5662e47e-0f3c-4c75-9643-b77079b3f7a8
+    m_ActionName: Gameplay/QuickReload[/Keyboard/r,/XInputControllerWindows/select]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Mouse & Keyboard
   m_DefaultActionMap: Gameplay

@@ -1,3 +1,5 @@
+using UnityEngine.SceneManagement;
+
 public class SCR_DimensionSwapManager
 {
     public static SCR_DimensionSwapManager Instance
@@ -13,7 +15,16 @@ public class SCR_DimensionSwapManager
     }
     private static SCR_DimensionSwapManager _instance;
 
+    private const int NUM_USES_DEFAULT = 3;
+    private int m_NumUses;
+
     private event OnSwapCallbackDelegate OnSwap;
+
+    SCR_DimensionSwapManager()
+    {
+        SceneManager.sceneUnloaded += OnSceneUnloaded;
+        ForceReset();
+    }
 
     public void RegisterSwapCallback(OnSwapCallbackDelegate callback)
     {
@@ -26,14 +37,32 @@ public class SCR_DimensionSwapManager
 
     public void ForceSwap(eSwapType type)
     {
-        OnSwap?.Invoke(type);
+        //if(m_NumUses > 0)
+        //{
+        //    --m_NumUses;
+            OnSwap?.Invoke(type);
+        //}
+    }
+
+    public void OnSceneUnloaded(Scene current)
+    {
+        ForceReset();
     }
 
     public void ForceReset()
     {
-        foreach(OnSwapCallbackDelegate del in OnSwap.GetInvocationList())
+        if (OnSwap != null)
         {
-            OnSwap -= del;
+            foreach (OnSwapCallbackDelegate del in OnSwap?.GetInvocationList())
+            {
+                OnSwap -= del;
+            }
         }
+        m_NumUses = NUM_USES_DEFAULT;
+    }
+
+    public void StartLevel(int uses)
+    {
+        m_NumUses = uses;
     }
 }
