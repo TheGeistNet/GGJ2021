@@ -10,6 +10,11 @@ public class SCR_PlayerController : MonoBehaviour
     [Header("Physics")]
     [SerializeField]
     LayerMask collisionMask;
+    bool isCollidingBelow;
+    bool isCollidingAbove;
+    bool isCollidingRight;
+    bool isCollidingLeft;
+    Vector2 velocity;
 
     [Header("Bounding Box")]
     [SerializeField]
@@ -37,10 +42,6 @@ public class SCR_PlayerController : MonoBehaviour
     float gravitySign = -1.0f;
     float gravityAccelerationDefault;
     float gravityAcceleration;
-    bool isGrounded;
-    bool isCollidingRight;
-    bool isCollidingLeft;
-    Vector2 velocity;
 
     [Header("Walking")]
     [SerializeField]
@@ -81,7 +82,12 @@ public class SCR_PlayerController : MonoBehaviour
     bool jumpLandingQueued;
     float jumpLandingQueuedTime;
     float jumpWalkedOffLedgeTimeStamp;
-    bool jumpedRecently;
+    bool isJumping;
+
+    [Header("WallSliding")]
+    [SerializeField, Min(0.0f)]
+    float wallSlideMaxSpeed = 3.0f;
+
 
     // Debug variables
 #if UNITY_EDITOR
@@ -92,6 +98,7 @@ public class SCR_PlayerController : MonoBehaviour
     // Use awake to initialize values
     void Awake()
     {
+        wallSlideMaxSpeed = Mathf.Min(wallSlideMaxSpeed, gravityMaxMagnitude);
         CalculateGravity();
         CalculateJumpVelocities();
         CalculateBoundingBox();
@@ -144,7 +151,7 @@ public class SCR_PlayerController : MonoBehaviour
             if (walkAccelerationProgress < maxAcelerationProgress)
             {
                 // If grounded, apply normal acceleration
-                if (isGrounded)
+                if (isCollidingBelow)
                 {
                     walkAccelerationProgress = Mathf.Min(walkAccelerationProgress + (Time.deltaTime / walkAccelerationTime), maxAcelerationProgress);
                 }
@@ -170,7 +177,7 @@ public class SCR_PlayerController : MonoBehaviour
                 if (walkDecelerationProgress < 1.0f)
                 {
                     // If grounded, apply normal deceleration
-                    if (isGrounded)
+                    if (isCollidingBelow)
                     {
                         walkDecelerationProgress = Mathf.Min(walkDecelerationProgress + (Time.deltaTime / walkDecelerationTime), 1.0f);
                     }
@@ -191,15 +198,32 @@ public class SCR_PlayerController : MonoBehaviour
 
     void ApplyGravity()
     {
-        // If descending from a jump, apply descent gravity
-        if (Mathf.Sign(velocity.y) == gravitySign && jumpedRecently)
+        // If descending...
+        if (Mathf.Sign(velocity.y) == gravitySign)
         {
-            velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime * jumpDescentGravityMultiplier), -gravityMaxMagnitude, gravityMaxMagnitude);
+            // If wall sliding, clamp the max descent speed
+            if (isCollidingLeft || isCollidingRight)
+            {
+                velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime), -wallSlideMaxSpeed, wallSlideMaxSpeed);
+            }
+
+            // Otherwise, if jumping, apply the jump descent gravity
+            else if (isJumping)
+            {
+                velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime * jumpDescentGravityMultiplier), -gravityMaxMagnitude, gravityMaxMagnitude);
+            }
+
+            // Otherwise, apply normal gravity
+            else
+            {
+                velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime), -gravityMaxMagnitude, gravityMaxMagnitude);
+            }
         }
 
-        // Otherwise, apply normal gravity
+        // Otherwise, apply normal velocity
         else
         {
+
             velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime), -gravityMaxMagnitude, gravityMaxMagnitude);
         }
 
@@ -224,11 +248,27 @@ public class SCR_PlayerController : MonoBehaviour
             // Update velocity and move us out of any penetration
             velocity.x = 0.0f;
             calculatedMovement.x = (hitDistance - halfWidth) * traceSign;
+
+            // Update collision state
+            if (traceSign > 0.0f)
+            {
+                isCollidingRight = true;
+                isCollidingLeft = false;
+            }
+            else
+            {
+                isCollidingLeft = true;
+                isCollidingRight = false;
+            }
         }
         else
         {
             // Apply normal velocity
             calculatedMovement.x = proposedHorizontalMovement;
+
+            // Update collision state
+            isCollidingLeft = false;
+            isCollidingRight = false;
         }
 
         // Apply the movement
@@ -254,28 +294,19 @@ public class SCR_PlayerController : MonoBehaviour
             // Update velocity and move us out of any penetration
             velocity.y = 0.0f;
             calculatedMovement.y = (hitDistance - halfHeight) * traceSign;
-        }
-        else
-        {
-            // Apply normal velocity
-            calculatedMovement.y = proposedVerticalMovement;
-        }
 
-        // If we were moving in the direction of gravity
-        if (Mathf.Sign(proposedVerticalMovement) == gravitySign)
-        {
-            // If we are grounded
-            if (didCollideWithObject)
+            // If we were moving towards gravity
+            if (traceSign == gravitySign)
             {
                 // If we just became grounded
-                if (!isGrounded)
+                if (!isCollidingBelow)
                 {
-                    jumpedRecently = false;
+                    isJumping = false;
 
                     // If a jump is queued in the buffer recently
                     if (jumpLandingQueued)
                     {
-                        // If the jump was queued recently
+                        // If the jump was queued recently then jump
                         if (Time.time - jumpLandingQueuedTime <= jumpLandingBufferTime)
                         {
                             Jump();
@@ -284,34 +315,35 @@ public class SCR_PlayerController : MonoBehaviour
                     }
                 }
 
-                // Update state
-                isGrounded = true;
+                // Update collision state
+                isCollidingBelow = true;
+                isCollidingAbove = false;
             }
 
-            // Otherwise, if we are not grounded
+            // If we were moving away from gravity
             else
             {
-                // If we just stopped being grounded
-                if (isGrounded)
-                {
-                    // We know it wasn't a jump because our velocity is < 0.0f
-                    // Cache the walk off ledge time
-                    jumpWalkedOffLedgeTimeStamp = Time.time;
-                }
-
-                // Update state
-                isGrounded = false;
+                isCollidingAbove = true;
+                isCollidingBelow = false;
             }
         }
 
-        // Otherwise, if we were moving away from gravity
+        // If we did not collide with an object
         else
         {
-            // If we were on the ground and moved away
-            if (isGrounded && Mathf.Sign(calculatedMovement.y) != gravitySign)
+            // Apply normal velocity
+            calculatedMovement.y = proposedVerticalMovement;
+
+            // If we are moving towards gravity and just stopped being grounded
+            if (isCollidingBelow && traceSign == gravitySign)
             {
-                isGrounded = false;
+                // Cache the walk off ledge time
+                jumpWalkedOffLedgeTimeStamp = Time.time;
             }
+
+            // Update collision state
+            isCollidingBelow = false;
+            isCollidingAbove = false;
         }
 
         // Apply the movement
@@ -420,7 +452,7 @@ public class SCR_PlayerController : MonoBehaviour
     void Jump()
     {
         velocity.y = jumpVelocityMax * -1.0f * gravitySign;
-        jumpedRecently = true;
+        isJumping = true;
         return;
     }
 
@@ -465,13 +497,13 @@ public class SCR_PlayerController : MonoBehaviour
         if (context.performed)
         {
             // If grounded, jump
-            if (isGrounded)
+            if (isCollidingBelow)
             {
                 Jump();
             }
 
             // Otherwise, check if we just walked off the ledge
-            else if (!jumpedRecently && Time.time - jumpWalkedOffLedgeTimeStamp <= jumpWalkOffLedgeBufferTime)
+            else if (!isJumping && Time.time - jumpWalkedOffLedgeTimeStamp <= jumpWalkOffLedgeBufferTime)
             {
                 Jump();
             }

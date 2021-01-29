@@ -144,7 +144,7 @@ MonoBehaviour:
   verticalRayCount: 5
   gravityMaxMagnitude: 20
   startWithInversedGravity: 0
-  walkMaxSpeed: 6
+  walkMaxSpeed: 6.5
   walkAccelerationTime: 0.3
   walkDecelerationTime: 0.1
   walkAccelerationAirborneMultiplier: 0.5
@@ -203,6 +203,7 @@ MonoBehaviour:
   jumpLandingBufferTime: 0.1
   jumpWalkOffLedgeBufferTime: 0.1
   jumpDescentGravityMultiplier: 2
+  wallSlideMaxSpeed: 3
   debugPhysics: 1
 --- !u!114 &9123260558485340391
 MonoBehaviour:
