@@ -19,6 +19,7 @@ public class SCR_IntroCutscene : MonoBehaviour
 
     public void LoadGameplay()
     {
-        SceneManager.LoadScene(2);
+        SCR_LoadData.sceneToLoad = "SCN_InGameUITest";
+        SceneManager.LoadScene("SCN_LoadingScreen");
     }
 }

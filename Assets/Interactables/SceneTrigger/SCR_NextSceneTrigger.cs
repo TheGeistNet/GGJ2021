@@ -25,7 +25,8 @@ public class SCR_NextSceneTrigger : MonoBehaviour
         {
             if (nextSceneName != "")
             {
-                SceneManager.LoadSceneAsync(nextSceneName);
+                SCR_LoadData.sceneToLoad = nextSceneName;
+                SceneManager.LoadSceneAsync("SCN_LoadingScreen");
             }
         }
     }
