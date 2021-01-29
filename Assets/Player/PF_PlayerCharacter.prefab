@@ -204,6 +204,12 @@ MonoBehaviour:
   jumpWalkOffLedgeBufferTime: 0.1
   jumpDescentGravityMultiplier: 2
   wallSlideMaxSpeed: 2.5
+  wallJumpBufferTime: 0.35
+  wallJumpStartAccelerationScalar: 0.75
+  wallJumpAccelerationMultiplier: 2
+  wallJumpHeightScalar: 0.75
+  wallJumpMinPushOffTime: 0.5
+  isWallJumping: 0
   debugPhysics: 1
 --- !u!114 &9123260558485340391
 MonoBehaviour:
