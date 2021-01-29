@@ -25,7 +25,7 @@ public class SCR_PlayerSwapController : SCR_DimensionSwapObserverBase
     {
         if (context.performed)
         {
-            SCR_DimensionSwapManager.Instance.ForceSwap(eSwapType.SWAP_TYPE_GRAVITY);
+            SCR_DimensionSwapManager.Instance.ForceSwap(eSwapType.SWAP_TYPE_CURRENT);
         }
     }
 }
