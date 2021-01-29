@@ -145,8 +145,8 @@ MonoBehaviour:
   gravityMaxMagnitude: 20
   startWithInversedGravity: 0
   walkMaxSpeed: 6
-  walkAccelerationTime: 0.05
-  walkDecelerationTime: 0.3
+  walkAccelerationTime: 0.3
+  walkDecelerationTime: 0.1
   walkAccelerationAirborneMultiplier: 0.5
   walkDeceleratioAirbornenMultiplier: 0.5
   walkAccelerationCurve:
@@ -198,7 +198,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   jumpTimeToApex: 0.6
-  jumpHeightMax: 3
+  jumpHeightMax: 2.5
   jumpHeightMin: 1
   jumpLandingBufferTime: 0.1
   jumpWalkOffLedgeBufferTime: 0.1
@@ -211,7 +211,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937568922657786346}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f2d6d01080a4e804bb7abf452b25c02d, type: 3}
   m_Name: 

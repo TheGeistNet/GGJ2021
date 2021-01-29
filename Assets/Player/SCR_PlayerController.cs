@@ -41,7 +41,6 @@ public class SCR_PlayerController : MonoBehaviour
     bool isCollidingRight;
     bool isCollidingLeft;
     Vector2 velocity;
-    Vector2 calculatedMovement;
 
     [Header("Walking")]
     [SerializeField]
@@ -59,8 +58,8 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField]
     AnimationCurve walkDecelerationCurve;
     bool isWalking;
-    float walkAxis;
-    float lastWalkAxis;
+    float walkDirection;
+    float lastWalkDirection;
     float walkAccelerationProgress;
     float walkDecelerationProgress = 1.0f;
 
@@ -119,53 +118,64 @@ public class SCR_PlayerController : MonoBehaviour
         // Calculate new gravity
         ApplyGravity();
 
-        // Handle collisions
-        UpdateHorizontalCollisions();
-        origin.x += calculatedMovement.x;
-
-        UpdateVerticalCollisions();
-
-        // Move the character
-        transform.Translate(calculatedMovement);
+        // Calculate movement
+        UpdateHorizontalMovement();
+        UpdateVerticalMovement();
 
         return;
     }
 
     void ApplyWalking()
     {
+        // If walking
         if (isWalking)
         {
-            float walkDirection = Mathf.Sign(walkAxis);
-            if (Mathf.Sign(lastWalkAxis) != walkDirection)
+            // Cache the direction
+            float walkDirection = Mathf.Sign(this.walkDirection);
+
+            // If we changed direction, set accel progress to 0
+            if (lastWalkDirection != walkDirection)
             {
                 walkAccelerationProgress = 0.0f;
             }
 
-            float maxAcelerationProgress = Mathf.Abs(walkAxis);
+            // Cap the max accel progresss based on the analog stick
+            float maxAcelerationProgress = Mathf.Abs(this.walkDirection);
             if (walkAccelerationProgress < maxAcelerationProgress)
             {
+                // If grounded, apply normal acceleration
                 if (isGrounded)
                 {
                     walkAccelerationProgress = Mathf.Min(walkAccelerationProgress + (Time.deltaTime / walkAccelerationTime), maxAcelerationProgress);
                 }
+
+                // Otherwise, apply airborne acceleratiob
                 else
                 {
                     walkAccelerationProgress = Mathf.Min(walkAccelerationProgress + ((Time.deltaTime / walkAccelerationTime) * walkAccelerationAirborneMultiplier), maxAcelerationProgress);
                 }
             }
+
+            //Set
             velocity.x = walkDirection * (Mathf.Max(walkAccelerationCurve.Evaluate(walkAccelerationProgress) * walkMaxSpeed, Mathf.Abs(velocity.x)));
-            lastWalkAxis = walkAxis;
         }
+
+        // If not walking
         else
         {
+            // If still moving
             if (Mathf.Abs(velocity.x) > 0.0f)
             {
+                // If not finished decelerating
                 if (walkDecelerationProgress < 1.0f)
                 {
+                    // If grounded, apply normal deceleration
                     if (isGrounded)
                     {
                         walkDecelerationProgress = Mathf.Min(walkDecelerationProgress + (Time.deltaTime / walkDecelerationTime), 1.0f);
                     }
+
+                    // Otherwise, apply airborne deceleration
                     else
                     {
                         walkDecelerationProgress = Mathf.Min(walkDecelerationProgress + ((Time.deltaTime / walkDecelerationTime) * walkDeceleratioAirbornenMultiplier), 1.0f);
@@ -174,6 +184,9 @@ public class SCR_PlayerController : MonoBehaviour
                 velocity.x = Mathf.Sign(velocity.x) * (Mathf.Min((1.0f - walkDecelerationCurve.Evaluate(walkDecelerationProgress)) * walkMaxSpeed, Mathf.Abs(velocity.x)));
             }
         }
+
+        // Cache the last walk axis
+        lastWalkDirection = walkDirection;
     }
 
     void ApplyGravity()
@@ -193,8 +206,10 @@ public class SCR_PlayerController : MonoBehaviour
         return;
     }
 
-    void UpdateHorizontalCollisions()
+    void UpdateHorizontalMovement()
     {
+        Vector2 calculatedMovement = new Vector2();
+
         // Cache the proposed horizontal movement
         float proposedHorizontalMovement = velocity.x * Time.deltaTime;
 
@@ -215,10 +230,16 @@ public class SCR_PlayerController : MonoBehaviour
             // Apply normal velocity
             calculatedMovement.x = proposedHorizontalMovement;
         }
+
+        // Apply the movement
+        origin += calculatedMovement;
+        transform.Translate(calculatedMovement);
     }
 
-    void UpdateVerticalCollisions()
+    void UpdateVerticalMovement()
     {
+        Vector2 calculatedMovement = new Vector2();
+
         // Cache the proposed vertical movement
         float proposedVerticalMovement = velocity.y * Time.deltaTime;
 
@@ -292,6 +313,10 @@ public class SCR_PlayerController : MonoBehaviour
                 isGrounded = false;
             }
         }
+
+        // Apply the movement
+        origin += calculatedMovement;
+        transform.Translate(calculatedMovement);
 
         return;
     }
@@ -405,7 +430,7 @@ public class SCR_PlayerController : MonoBehaviour
         if (context.performed)
         {
             isWalking = true;
-            walkAxis = context.ReadValue<float>();
+            walkDirection = context.ReadValue<float>();
 
             // Get the walk deceleration scalar based on the walk acceleration progress
             float walkDecelScalar = walkDecelerationCurve.Evaluate(walkDecelerationProgress);
@@ -430,7 +455,7 @@ public class SCR_PlayerController : MonoBehaviour
         }
         else
         {
-            walkAxis = context.ReadValue<float>();
+            walkDirection = context.ReadValue<float>();
         }
     }
 
@@ -460,7 +485,7 @@ public class SCR_PlayerController : MonoBehaviour
         }
 
         // Set jump velocity
-        else if (context.canceled && Mathf.Abs(velocity.y) > jumpVelocityMin)
+        else if (context.canceled && Mathf.Abs(velocity.y) > jumpVelocityMin && Mathf.Sign(velocity.y) != gravitySign)
         {
             velocity.y = jumpVelocityMin * -1.0f * gravitySign;
         }
