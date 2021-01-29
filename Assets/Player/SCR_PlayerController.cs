@@ -84,7 +84,7 @@ public class SCR_PlayerController : MonoBehaviour
     float jumpWalkedOffLedgeTimeStamp;
     bool isJumping;
 
-    [Header("WallSliding")]
+    [Header("Wall Sliding")]
     [SerializeField, Min(0.0f)]
     float wallSlideMaxSpeed = 3.0f;
 
