@@ -35,6 +35,10 @@ public class SCR_PlayerDeath : MonoBehaviour, SCR_IDamageable, SCR_ICanTrigger
 
     public void Kill()
     {
+        if(m_TimeOfDeath != -1)
+        {
+            return;
+        }
         m_TimeOfDeath = Time.time;
         foreach (GameObject g in m_OnDeathFeedbackObjects)
         {

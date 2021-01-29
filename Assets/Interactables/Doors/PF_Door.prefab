@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5909145017357408143}
   - component: {fileID: 5909145017357408142}
   - component: {fileID: 5909145017357408113}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: PF_Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}

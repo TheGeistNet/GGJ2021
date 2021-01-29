@@ -25,8 +25,13 @@ public class SCR_Switch : MonoBehaviour
         {
             return;
         }
-
-        SCR_ICanTrigger triggerObject = collision?.gameObject?.GetComponent<SCR_ICanTrigger>();
+        GameObject g = collision.gameObject;
+        SCR_ICanTrigger triggerObject = null;
+        while (g != null && triggerObject == null)
+        {
+            triggerObject = g.GetComponent<SCR_ICanTrigger>();
+            g = g.transform.parent?.gameObject;
+        }
         if(triggerObject == null)
         {
             return;

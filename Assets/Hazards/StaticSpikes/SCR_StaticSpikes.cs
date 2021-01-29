@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class SCR_StaticSpikes : MonoBehaviour
 {
-    public GameObject m_SingleSpikePrefab;
     public int m_DamageAmount = 1;
 
     public int m_AmountInStrip = 1;
@@ -40,19 +39,13 @@ public class SCR_StaticSpikes : MonoBehaviour
 
     public void LayoutSingleSpikes()
     {
-        List<Transform> toDel = new List<Transform>();
-        foreach (Transform child in transform)
-        {
-            toDel.Add(child);
-        }
-        toDel.ForEach((Transform t) => { DestroyImmediate(t.gameObject); });
-        Vector3 selfPos = transform.position;
-        float angle = transform.rotation.eulerAngles.z;
-        Vector3 direction = Quaternion.Euler(0, 0, angle) * new Vector3(0.5f, 0, 0);
-        for (int x = 0; x < m_AmountInStrip; ++x)
-        {
-            GameObject inst = Instantiate(m_SingleSpikePrefab, transform);
-            inst.transform.position = transform.position + direction * x;
-        }
+        SpriteRenderer sprite = GetComponent<SpriteRenderer>();
+        BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        collider.size = new Vector2(collider.size.x, 0.5f * (m_AmountInStrip - 1));
+        sprite.size = new Vector2(sprite.size.x, 0.5f * m_AmountInStrip);
+        GameObject leftCollider = transform.GetChild(0).gameObject;
+        GameObject rightCollider = transform.GetChild(1).gameObject;
+        leftCollider.transform.localPosition = new Vector3(0, -0.5f + 0.25f * (m_AmountInStrip - 1), 0);
+        rightCollider.transform.localPosition = new Vector3(0, -0.5f - 0.25f * (m_AmountInStrip - 1), 0);
     }
 }
