@@ -38,6 +38,7 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
 
     private void CheckDamage(GameObject other)
     {
+        Debug.Log(other.name);
         if (other == null)
         {
             return;
