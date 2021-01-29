@@ -23,6 +23,21 @@ public class SCR_StaticSpikes : MonoBehaviour
         damagable.Damage(m_DamageAmount);
     }
 
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        GameObject other = collision.gameObject;
+        if (other == null)
+        {
+            return;
+        }
+        SCR_IDamageable damagable = other.GetComponent<SCR_IDamageable>();
+        if (damagable == null)
+        {
+            return;
+        }
+        damagable.Damage(m_DamageAmount);
+    }
+
     public void LayoutSingleSpikes()
     {
         List<Transform> toDel = new List<Transform>();
