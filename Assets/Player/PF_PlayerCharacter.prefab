@@ -144,7 +144,7 @@ MonoBehaviour:
   verticalRayCount: 5
   gravityMaxMagnitude: 20
   startWithInversedGravity: 0
-  walkMaxSpeed: 6
+  walkMaxSpeed: 6.5
   walkAccelerationTime: 0.3
   walkDecelerationTime: 0.1
   walkAccelerationAirborneMultiplier: 0.5
@@ -203,6 +203,7 @@ MonoBehaviour:
   jumpLandingBufferTime: 0.1
   jumpWalkOffLedgeBufferTime: 0.1
   jumpDescentGravityMultiplier: 2
+  wallSlideMaxSpeed: 2.5
   debugPhysics: 1
 --- !u!114 &9123260558485340391
 MonoBehaviour:
@@ -211,11 +212,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 937568922657786346}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f2d6d01080a4e804bb7abf452b25c02d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_StartSwapped: 0
 --- !u!61 &1817163816175706379
 BoxCollider2D:
   m_ObjectHideFlags: 0
