@@ -485,7 +485,7 @@ public class SCR_PlayerController : MonoBehaviour
         }
 
         // Set jump velocity
-        else if (context.canceled && Mathf.Abs(velocity.y) > jumpVelocityMin)
+        else if (context.canceled && Mathf.Abs(velocity.y) > jumpVelocityMin && Mathf.Sign(velocity.y) != gravitySign)
         {
             velocity.y = jumpVelocityMin * -1.0f * gravitySign;
         }
