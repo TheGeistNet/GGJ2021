@@ -8,6 +8,7 @@ public class SCR_Switch : MonoBehaviour
     public bool m_Retriggerable = false;
     public float m_RetriggerDuration = 2.0f;
     public GameObject[] m_ObjectsToTrigger;
+    public bool m_PlayerTriggerable = true;
 
     private float m_RetriggerTimer = 0.0f;
     private bool m_HasTriggered = false;
@@ -27,6 +28,10 @@ public class SCR_Switch : MonoBehaviour
 
         SCR_ICanTrigger triggerObject = collision?.gameObject?.GetComponent<SCR_ICanTrigger>();
         if(triggerObject == null)
+        {
+            return;
+        }
+        if(!m_PlayerTriggerable && collision.gameObject.layer.Equals(LayerMask.NameToLayer("Player")))
         {
             return;
         }
