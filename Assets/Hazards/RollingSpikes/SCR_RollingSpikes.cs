@@ -26,9 +26,18 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
         m_GravitySimulator.force = new Vector2(m_GravitySimulator.force.x, -m_GravitySimulator.force.y);
     }
 
+    public void OnTriggerEnter2D(Collider2D collision)
+    {
+        CheckDamage(collision.gameObject);
+    }
+
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        GameObject other = collision.gameObject;
+        CheckDamage(collision.gameObject);
+    }
+
+    private void CheckDamage(GameObject other)
+    {
         if (other == null)
         {
             return;
