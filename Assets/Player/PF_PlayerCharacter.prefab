@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 8223051734281805172}
   m_Layer: 7
   m_Name: PF_PlayerCharacter
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -350,38 +350,6 @@ MonoBehaviour:
         m_CallState: 2
     m_ActionId: bc97ef4a-f5bf-4670-a6e4-6645e3a45e90
     m_ActionName: Gameplay/Jump[/Keyboard/space,/Keyboard/w,/Keyboard/upArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: b4815539-35ce-4052-b5ec-55bfe5a09fcc
-    m_ActionName: UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: efd2eab0-65b3-4575-b7cd-6c026b3e48d0
-    m_ActionName: UI/Submit[/Keyboard/enter]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: c3382d97-da84-40ca-aa1b-72a78096965f
-    m_ActionName: UI/Cancel[/Keyboard/escape]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: abc38802-04bd-499d-aa44-bc9b922ceeee
-    m_ActionName: UI/Point[/Mouse/position]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 78f89e23-98df-4ae4-95ca-51e68cb1d667
-    m_ActionName: UI/Click[/Mouse/leftButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: e27feba9-ce6b-458d-bf1a-6af982cf812a
-    m_ActionName: UI/ScrollWheel[/Mouse/scroll]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 360f13f8-956d-4cac-9c1c-465dbea3fd82
-    m_ActionName: UI/MiddleClick[/Mouse/middleButton]
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 4d97ff3e-da40-4f59-b40b-1958de0ced89
-    m_ActionName: UI/RightClick[/Mouse/rightButton]
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 9123260558485340391}
