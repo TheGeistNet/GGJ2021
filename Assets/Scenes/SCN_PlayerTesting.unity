@@ -287,6 +287,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: wallJumpMinPushOffTime
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3725707468415919308, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
       propertyPath: wallJumpAccelerationMultiplier
       value: 1.5
       objectReference: {fileID: 0}
