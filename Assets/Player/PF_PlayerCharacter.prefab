@@ -329,6 +329,8 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  walkAccelerationProgress: 0
+  walkDecelerationProgress: 1
   jumpTimeToApex: 0.6
   jumpHeightMax: 2.5
   jumpHeightMin: 1
@@ -336,12 +338,11 @@ MonoBehaviour:
   jumpWalkOffLedgeBufferTime: 0.1
   jumpDescentGravityMultiplier: 2
   wallSlideMaxSpeed: 2.5
-  wallJumpBufferTime: 0.35
-  wallJumpStartAccelerationScalar: 0.75
-  wallJumpAccelerationMultiplier: 2
+  wallJumpBufferTime: 0.1
+  wallJumpStartAccelerationScalar: 1
+  wallJumpAccelerationMultiplier: 1.5
   wallJumpHeightScalar: 0.75
   wallJumpMinPushOffTime: 0.5
-  isWallJumping: 0
   debugPhysics: 1
 --- !u!114 &9123260558485340391
 MonoBehaviour:
