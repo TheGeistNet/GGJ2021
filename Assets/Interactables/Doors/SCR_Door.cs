@@ -7,8 +7,8 @@ public class SCR_Door : MonoBehaviour, SCR_ITriggerable
     public Vector3 m_StartPosition;
     public Vector3 m_EndPosition;
     public float m_Time = 2.0f;
-    public float m_RumbleAmountX = 0.5f;
-    public float m_RumbleAmountY = 0.5f;
+    public float m_RumbleAmountX = 0;
+    public float m_RumbleAmountY = 0;
 
     private Vector3 direction;
     private float timer;
