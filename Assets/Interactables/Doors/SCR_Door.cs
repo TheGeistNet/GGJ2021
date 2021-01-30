@@ -7,6 +7,8 @@ public class SCR_Door : MonoBehaviour, SCR_ITriggerable
     public Vector3 m_StartPosition;
     public Vector3 m_EndPosition;
     public float m_Time = 2.0f;
+    public float m_RumbleAmountX = 0.5f;
+    public float m_RumbleAmountY = 0.5f;
 
     private Vector3 direction;
     private float timer;
@@ -32,8 +34,8 @@ public class SCR_Door : MonoBehaviour, SCR_ITriggerable
                 m_Closing = false;
             }
             transform.position = m_StartPosition + direction * (timer / m_Time);
+            transform.position += new Vector3(Random.Range(0, m_RumbleAmountX), Random.Range(0, m_RumbleAmountY), 0);
         }
-
     }
 
     public void Trigger()
