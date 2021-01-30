@@ -275,8 +275,8 @@ MonoBehaviour:
   horizontalRayCount: 5
   verticalRayCount: 5
   gravityMaxMagnitude: 20
-  startWithInversedGravity: 1
-  walkMaxSpeed: 6.5
+  startWithInversedGravity: 0
+  walkMaxSpeed: 7
   walkAccelerationTime: 0.3
   walkDecelerationTime: 0.1
   walkAccelerationAirborneMultiplier: 0.5
@@ -331,14 +331,14 @@ MonoBehaviour:
     m_RotationOrder: 4
   walkAccelerationProgress: 0
   walkDecelerationProgress: 1
-  jumpTimeToApex: 0.6
-  jumpHeightMax: 2.5
+  jumpTimeToApex: 0.5
+  jumpHeightMax: 3
   jumpHeightMin: 1
   jumpLandingBufferTime: 0.1
   jumpWalkOffLedgeBufferTime: 0.1
   jumpDescentGravityMultiplier: 2
-  wallSlideMaxSpeed: 2.5
-  wallJumpBufferTime: 0.2
+  wallSlideMaxSpeed: 2
+  wallJumpBufferTime: 0.35
   wallJumpStartAccelerationScalar: 1
   wallJumpAccelerationMultiplier: 1.5
   wallJumpHeightScalar: 0.75
