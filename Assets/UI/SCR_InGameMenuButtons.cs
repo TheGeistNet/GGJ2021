@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class SCR_InGameMenuButtons : MonoBehaviour
 {
     Canvas thisCanvas;
+    AudioSource thisAudioSource;
     public Canvas hudCanvas;
     public SCR_ControlsRemapping controlsScript;
     public SCR_AudioOptionManager audioOptionsScript;
@@ -15,6 +16,7 @@ public class SCR_InGameMenuButtons : MonoBehaviour
     void Start()
     {
         thisCanvas = GetComponent<Canvas>();
+        thisAudioSource = GetComponent<AudioSource>();
         player = FindObjectOfType<SCR_PlayerUI>();
     }
 
@@ -27,6 +29,7 @@ public class SCR_InGameMenuButtons : MonoBehaviour
     {
         thisCanvas.enabled = false;
         hudCanvas.enabled = true;
+        thisAudioSource.Play();
         player.ReturnToGame();
     }
 
@@ -34,6 +37,7 @@ public class SCR_InGameMenuButtons : MonoBehaviour
     {
         thisCanvas.enabled = false;
         controlsScript.CanvasEnable();
+        thisAudioSource.Play();
     }
 
     public void AudioOptionsButton()
@@ -41,6 +45,7 @@ public class SCR_InGameMenuButtons : MonoBehaviour
         thisCanvas.enabled = false;
 
         audioOptionsScript.CanvasEnable();
+        thisAudioSource.Play();
     }
 
     public void QuitButton()

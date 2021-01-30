@@ -281,6 +281,7 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
                         m_RebindStopEvent?.Invoke(this, operation);
                         UpdateBindingDisplay();
                         CleanUp();
+                        m_SuccesfulRebindEvent?.Invoke(this);
 
                         // If there's more composite parts we should bind, initiate a rebind
                         // for the next part.
@@ -409,6 +410,9 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
         [SerializeField]
         private InteractiveRebindEvent m_RebindStopEvent;
 
+        [SerializeField]
+        private SuccessfulRebindEvent m_SuccesfulRebindEvent;
+
         private InputActionRebindingExtensions.RebindingOperation m_RebindOperation;
 
         private static List<RebindActionUI> s_RebindActionUIs;
@@ -441,6 +445,12 @@ namespace UnityEngine.InputSystem.Samples.RebindUI
         [Serializable]
         public class InteractiveRebindEvent : UnityEvent<RebindActionUI, InputActionRebindingExtensions.RebindingOperation>
         {
+        }
+
+        [Serializable]
+        public class SuccessfulRebindEvent : UnityEvent<RebindActionUI>
+        {
+
         }
     }
 }

@@ -30,7 +30,7 @@
                     "interactions": "Press"
                 },
                 {
-                    "name": "QuickReload",
+                    "name": "Reload",
                     "type": "Button",
                     "id": "5662e47e-0f3c-4c75-9643-b77079b3f7a8",
                     "expectedControlType": "Button",
@@ -230,7 +230,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Mouse & Keyboard",
-                    "action": "QuickReload",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -241,7 +241,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "QuickReload",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

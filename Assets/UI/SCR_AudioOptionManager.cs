@@ -14,6 +14,7 @@ public class SCR_AudioOptionManager : MonoBehaviour
     public Slider musicVolumeSlider;
 
     Canvas thisCanvas;
+    AudioSource thisAudioSource;
     
 
     // Start is called before the first frame update
@@ -25,6 +26,7 @@ public class SCR_AudioOptionManager : MonoBehaviour
     private void Start()
     {
         CanvasDisable();
+        thisAudioSource = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -56,6 +58,7 @@ public class SCR_AudioOptionManager : MonoBehaviour
         if (mainMenuCanvas)
         {
             mainMenuCanvas.enabled = true;
+            thisAudioSource.Play();
         }
     }
 
