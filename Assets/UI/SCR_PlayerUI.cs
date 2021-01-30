@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class SCR_PlayerUI : MonoBehaviour
 {
     SCR_HUDButtons hudButtons;
+    SCR_HUDSwapCounter hudSwapCounter;
     bool runMenuSwitch = true;
     PlayerInput player;
     // Start is called before the first frame update
@@ -15,6 +16,7 @@ public class SCR_PlayerUI : MonoBehaviour
     void Start()
     {
         hudButtons = FindObjectOfType<SCR_HUDButtons>();
+        hudSwapCounter = hudButtons.gameObject.GetComponent<SCR_HUDSwapCounter>();
         player = GetComponent<PlayerInput>();
     }
 
@@ -37,5 +39,13 @@ public class SCR_PlayerUI : MonoBehaviour
     {
         runMenuSwitch = true;
         player.enabled = true;
+    }
+
+    public void AddToSwapCounter(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            hudSwapCounter.AddToCounter();
+        }
     }
 }

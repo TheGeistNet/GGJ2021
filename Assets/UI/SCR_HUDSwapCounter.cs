@@ -30,9 +30,9 @@ public class SCR_HUDSwapCounter : MonoBehaviour
         counterText.text = counterTally.ToString();
     }
 
-    public void AddToCollectible()
+    public void AddToCollectible(int points)
     {
-        collectibleTally = collectibleTally + 1;
+        collectibleTally = collectibleTally + points;
         collectibleText.text = collectibleTally.ToString();
     }
 

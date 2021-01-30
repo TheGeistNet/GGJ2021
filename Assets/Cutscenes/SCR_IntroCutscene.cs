@@ -19,7 +19,7 @@ public class SCR_IntroCutscene : MonoBehaviour
 
     public void LoadGameplay()
     {
-        SCR_LoadData.sceneToLoad = "SCN_InGameUITest";
+        SCR_LoadData.sceneToLoad = "SCN_MainLevel";
         SceneManager.LoadScene("SCN_LoadingScreen");
     }
 }

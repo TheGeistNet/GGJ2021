@@ -58,10 +58,10 @@ public class SCR_PlayerController : MonoBehaviour
     AnimationCurve walkAccelerationCurve;
     [SerializeField]
     AnimationCurve walkDecelerationCurve;
-    bool isWalking;
-    float walkDirection;
-    float lastWalkDirection;
-    float walkAccelerationProgress;
+    bool isWalking = false;
+    float walkAxis;
+    float walkDirection = 1.0f;
+    float walkAccelerationProgress = 0.0f;
     float walkDecelerationProgress = 1.0f;
 
     [Header("Jumping")]
@@ -80,13 +80,29 @@ public class SCR_PlayerController : MonoBehaviour
     float jumpVelocityMax;
     float jumpVelocityMin;
     bool jumpLandingQueued;
-    float jumpLandingQueuedTime;
+    float jumpLandingQueuedTimeStamp;
     float jumpWalkedOffLedgeTimeStamp;
     bool isJumping;
 
     [Header("Wall Sliding")]
     [SerializeField, Min(0.0f)]
-    float wallSlideMaxSpeed = 3.0f;
+    float wallSlideMaxSpeed = 2.5f;
+
+    [Header("Wall Jumping")]
+    [SerializeField, Min(0.0f)]
+    float wallJumpBufferTime = 0.1f;
+    [SerializeField, Range(0.0f, 1.0f)]
+    float wallJumpStartAccelerationScalar = 0.75f;
+    [SerializeField]
+    float wallJumpAccelerationMultiplier = 2.0f;
+    [SerializeField, Range(0.0f, 1.0f)]
+    float wallJumpHeightScalar = 0.75f;
+    [SerializeField, Min(0.0f)]
+    float wallJumpMinPushOffTime = 0.5f;
+    float wallJumpStartTimeStamp;
+    public bool isWallJumping;
+    float wallJumpDirection = 1.0f;
+    float wallJumpLastPushOffTimeTimeStamp;
 
 
     // Debug variables
@@ -98,7 +114,6 @@ public class SCR_PlayerController : MonoBehaviour
     // Use awake to initialize values
     void Awake()
     {
-        wallSlideMaxSpeed = Mathf.Min(wallSlideMaxSpeed, gravityMaxMagnitude);
         CalculateGravity();
         CalculateJumpVelocities();
         CalculateBoundingBox();
@@ -134,20 +149,36 @@ public class SCR_PlayerController : MonoBehaviour
 
     void ApplyWalking()
     {
+        // If walljumped recently
+        if (isWallJumping && Time.time - wallJumpStartTimeStamp <= wallJumpMinPushOffTime)
+        {
+            float maxAcelerationProgress = Mathf.Min(wallJumpStartAccelerationScalar, Mathf.Abs(walkAxis));
+
+            if (walkAccelerationProgress < maxAcelerationProgress)
+            {
+                // Apply airborne acceleration
+                walkAccelerationProgress = Mathf.Min(walkAccelerationProgress + ((Time.deltaTime / walkAccelerationTime) * wallJumpAccelerationMultiplier), maxAcelerationProgress);
+            }
+
+            //Set velocity
+            velocity.x = walkDirection * (Mathf.Max(walkAccelerationCurve.Evaluate(walkAccelerationProgress) * walkMaxSpeed, Mathf.Abs(velocity.x)));
+        }
+
         // If walking
-        if (isWalking)
+        else if (isWalking)
         {
             // Cache the direction
-            float walkDirection = Mathf.Sign(this.walkDirection);
+            float newWalkDirection = Mathf.Sign(walkAxis);
 
             // If we changed direction, set accel progress to 0
-            if (lastWalkDirection != walkDirection)
+            if (newWalkDirection != walkDirection)
             {
                 walkAccelerationProgress = 0.0f;
             }
+            walkDirection = newWalkDirection;
 
             // Cap the max accel progresss based on the analog stick
-            float maxAcelerationProgress = Mathf.Abs(this.walkDirection);
+            float maxAcelerationProgress = Mathf.Abs(walkAxis);
             if (walkAccelerationProgress < maxAcelerationProgress)
             {
                 // If grounded, apply normal acceleration
@@ -163,7 +194,7 @@ public class SCR_PlayerController : MonoBehaviour
                 }
             }
 
-            //Set
+            //Set velocity
             velocity.x = walkDirection * (Mathf.Max(walkAccelerationCurve.Evaluate(walkAccelerationProgress) * walkMaxSpeed, Mathf.Abs(velocity.x)));
         }
 
@@ -188,12 +219,10 @@ public class SCR_PlayerController : MonoBehaviour
                         walkDecelerationProgress = Mathf.Min(walkDecelerationProgress + ((Time.deltaTime / walkDecelerationTime) * walkDeceleratioAirbornenMultiplier), 1.0f);
                     }
                 }
+                //Set velocity
                 velocity.x = Mathf.Sign(velocity.x) * (Mathf.Min((1.0f - walkDecelerationCurve.Evaluate(walkDecelerationProgress)) * walkMaxSpeed, Mathf.Abs(velocity.x)));
             }
         }
-
-        // Cache the last walk axis
-        lastWalkDirection = walkDirection;
     }
 
     void ApplyGravity()
@@ -202,7 +231,7 @@ public class SCR_PlayerController : MonoBehaviour
         if (Mathf.Sign(velocity.y) == gravitySign)
         {
             // If wall sliding, clamp the max descent speed
-            if (isCollidingLeft || isCollidingRight)
+            if (isCollidingLeft && walkAxis < 0.0f || isCollidingRight && walkAxis > 0.0f)
             {
                 velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime), -wallSlideMaxSpeed, wallSlideMaxSpeed);
             }
@@ -260,15 +289,27 @@ public class SCR_PlayerController : MonoBehaviour
                 isCollidingLeft = true;
                 isCollidingRight = false;
             }
+
+            wallJumpDirection = -traceSign;
+
+            isWallJumping = false;
+            isJumping = false;
         }
         else
         {
             // Apply normal velocity
             calculatedMovement.x = proposedHorizontalMovement;
 
-            // Update collision state
-            isCollidingLeft = false;
-            isCollidingRight = false;
+            // If we just stopped colliding with a wall
+            if (isCollidingRight || isCollidingLeft)
+            {
+                // Cache the time we stopped touching the wall
+                wallJumpLastPushOffTimeTimeStamp = Time.time;
+
+                // Update collision state
+                isCollidingLeft = false;
+                isCollidingRight = false;
+            }
         }
 
         // Apply the movement
@@ -302,12 +343,13 @@ public class SCR_PlayerController : MonoBehaviour
                 if (!isCollidingBelow)
                 {
                     isJumping = false;
+                    isWallJumping = false;
 
                     // If a jump is queued in the buffer recently
                     if (jumpLandingQueued)
                     {
                         // If the jump was queued recently then jump
-                        if (Time.time - jumpLandingQueuedTime <= jumpLandingBufferTime)
+                        if (Time.time - jumpLandingQueuedTimeStamp <= jumpLandingBufferTime)
                         {
                             Jump();
                         }
@@ -456,26 +498,65 @@ public class SCR_PlayerController : MonoBehaviour
         return;
     }
 
+    void WallJump()
+    {
+        velocity.y = jumpVelocityMax * -1.0f * gravitySign * wallJumpHeightScalar;
+        velocity.x = walkAccelerationCurve.Evaluate(wallJumpStartAccelerationScalar) * wallJumpDirection;
+        isJumping = true;
+        isWallJumping = true;
+        walkDirection = wallJumpDirection;
+        wallJumpStartTimeStamp = Time.time;
+
+        return;
+    }
+
     // Walking
     public void OnWalk(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
             isWalking = true;
-            walkDirection = context.ReadValue<float>();
+            walkAxis = context.ReadValue<float>();
 
-            // Get the walk deceleration scalar based on the walk acceleration progress
-            float walkDecelScalar = walkDecelerationCurve.Evaluate(walkDecelerationProgress);
+            // Perform wall jump is queued in the buffer
+            if (!isCollidingBelow 
+                && !isWallJumping
+                && Mathf.Sign(walkAxis) == wallJumpDirection
+                && jumpLandingQueued 
+                && Time.time - jumpLandingQueuedTimeStamp <= wallJumpBufferTime)
+            {
+                jumpLandingQueued = false;
+                WallJump();
+            }
 
-            // Lookup the opposite of the scalar on acceleration curve
-            walkDecelScalar = 1.0f - walkDecelScalar;
-            walkAccelerationProgress = GetCurveTimeForValue(walkAccelerationCurve, walkDecelScalar, 10);
+            // Otherwise, hand;e walking
+            else
+            {
+                // Get the walk deceleration scalar based on the walk acceleration progress
+                float walkDecelScalar = walkDecelerationCurve.Evaluate(walkDecelerationProgress);
 
-            walkDecelerationProgress = 0.0f;
+                // Lookup the opposite of the scalar on acceleration curve
+                walkDecelScalar = 1.0f - walkDecelScalar;
+                walkAccelerationProgress = GetCurveTimeForValue(walkAccelerationCurve, walkDecelScalar, 10);
+
+                walkDecelerationProgress = 0.0f;
+            }
         }
         else if (context.canceled)
         {
             isWalking = false;
+            walkAxis = 0.0f;
+
+            // Perform wall jump is queued in the buffer
+            if (!isCollidingBelow
+                && !isWallJumping
+                && jumpLandingQueued
+                && Time.time - jumpLandingQueuedTimeStamp <= wallJumpBufferTime)
+            {
+                jumpLandingQueued = false;
+                WallJump();
+            }
+
             // Get the walk deceleration scalar based on the walk deceleration progress;
             float walkAccelScalar = walkAccelerationCurve.Evaluate(walkAccelerationProgress);
 
@@ -487,7 +568,19 @@ public class SCR_PlayerController : MonoBehaviour
         }
         else
         {
-            walkDirection = context.ReadValue<float>();
+            walkAxis = context.ReadValue<float>();
+
+            // Perform wall jump is queued in the buffer
+            if (Mathf.Sign(walkAxis) != walkDirection
+                && !isCollidingBelow
+                && !isWallJumping
+                && Mathf.Sign(walkAxis) == wallJumpDirection
+                && jumpLandingQueued
+                && Time.time - jumpLandingQueuedTimeStamp <= wallJumpBufferTime)
+            {
+                jumpLandingQueued = false;
+                WallJump();
+            }
         }
     }
 
@@ -508,11 +601,18 @@ public class SCR_PlayerController : MonoBehaviour
                 Jump();
             }
 
+            // Otherwise, check to see if we are jumping off a wall
+            else if ((isCollidingLeft || isCollidingRight || (!isWallJumping && Time.time - wallJumpLastPushOffTimeTimeStamp <= wallJumpBufferTime)) 
+                && (walkAxis == 0.0f || Mathf.Sign(walkAxis) != -wallJumpDirection))
+            {
+                WallJump();
+            }
+
             // Otherwise, queue a jump in case we land soon
             else
             {
                 jumpLandingQueued = true;
-                jumpLandingQueuedTime = Time.time;
+                jumpLandingQueuedTimeStamp = Time.time;
             }
         }
 

@@ -15,8 +15,8 @@ EditorBuildSettings:
     path: Assets/Scenes/SCN_LoadingScreen.unity
     guid: bb05f72edc6d8ce4198c0deab5192740
   - enabled: 1
-    path: Assets/Scenes/SCN_InGameUITest.unity
-    guid: bbf334fd143d9804ea22731ebc811e12
+    path: Assets/Scenes/SCN_MainLevel.unity
+    guid: 0d3f6944807af8f4abb4643098b7bf78
   - enabled: 1
     path: Assets/Scenes/SCN_Credits.unity
     guid: 5a122d215bb346c459af64033c83db50
