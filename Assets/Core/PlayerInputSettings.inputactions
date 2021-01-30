@@ -214,6 +214,17 @@
                 },
                 {
                     "name": "",
+                    "id": "440f93df-146c-4add-9ee4-b36706cc5937",
+                    "path": "<Keyboard>/leftCtrl",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Swap",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "cadbfb61-49cb-4b1a-bb48-3c10caff0a03",
                     "path": "<Keyboard>/r",
                     "interactions": "",
