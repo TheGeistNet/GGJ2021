@@ -639,8 +639,8 @@ public class SCR_PlayerController : MonoBehaviour
             }
 
             // Otherwise, check to see if we are jumping off a wall
-            else if ((isCollidingLeft || isCollidingRight || (!isWallJumping && Time.time - wallJumpLastPushOffTimeTimeStamp <= wallJumpBufferTime)) 
-                && (walkAxis == 0.0f || Mathf.Sign(walkAxis) == wallJumpDirection))
+            else if ((isCollidingLeft || isCollidingRight || (!isWallJumping && Time.time - wallJumpLastPushOffTimeTimeStamp <= wallJumpBufferTime)) )
+                //&& (walkAxis == 0.0f || Mathf.Sign(walkAxis) == wallJumpDirection))
             {
                 WallJump();
             }
