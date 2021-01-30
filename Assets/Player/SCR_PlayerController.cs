@@ -26,6 +26,17 @@ public class SCR_PlayerController : MonoBehaviour
     float halfWidth;
     float halfHeight;
 
+    [Header("Animation")]
+    [SerializeField]
+    Animator animator;
+    [SerializeField]
+    SpriteRenderer spriteRenderer;
+    int velocityXAnimationHash;
+    int onJumpAnimationHash;
+    int onLandAnimationHash;
+    int isAirborneAnimationHash;
+    int isMovingAnimationHash;
+
     [Header("Raycasting")]
     [SerializeField, Min(2)]
     int horizontalRayCount = 5;
@@ -118,6 +129,7 @@ public class SCR_PlayerController : MonoBehaviour
         CalculateJumpVelocities();
         CalculateBoundingBox();
         CalculateRayOrigins();
+        CalculateAnimationHashes();
 
         return;
     }
@@ -223,6 +235,16 @@ public class SCR_PlayerController : MonoBehaviour
                 velocity.x = Mathf.Sign(velocity.x) * (Mathf.Min((1.0f - walkDecelerationCurve.Evaluate(walkDecelerationProgress)) * walkMaxSpeed, Mathf.Abs(velocity.x)));
             }
         }
+        if (Mathf.Abs(velocity.x) > float.Epsilon)
+        {
+            spriteRenderer.flipX = velocity.x < 0;
+            animator.SetBool(isMovingAnimationHash, true);
+        }
+        else
+        {
+            animator.SetBool(isMovingAnimationHash, false);
+        }
+        animator.SetFloat(velocityXAnimationHash, velocity.x);
     }
 
     void ApplyGravity()
@@ -345,6 +367,9 @@ public class SCR_PlayerController : MonoBehaviour
                     isJumping = false;
                     isWallJumping = false;
 
+                    animator.SetBool(isAirborneAnimationHash, false);
+                    animator.SetTrigger(onLandAnimationHash);
+
                     // If a jump is queued in the buffer recently
                     if (jumpLandingQueued)
                     {
@@ -442,6 +467,7 @@ public class SCR_PlayerController : MonoBehaviour
         if (startWithInversedGravity)
         {
             gravitySign = 1.0f;
+            spriteRenderer.flipY = !spriteRenderer.flipY;
         }
         gravityAccelerationDefault = (2.0f * jumpHeightMax) / Mathf.Pow(jumpTimeToApex, 2.0f);
         gravityAcceleration = gravityAccelerationDefault;
@@ -490,11 +516,22 @@ public class SCR_PlayerController : MonoBehaviour
         return;
     }
 
+    void CalculateAnimationHashes()
+    {
+        velocityXAnimationHash = Animator.StringToHash("velocityX");
+        onJumpAnimationHash = Animator.StringToHash("onJump");
+        onLandAnimationHash = Animator.StringToHash("onLand");
+        isAirborneAnimationHash = Animator.StringToHash("isAirborne");
+        isMovingAnimationHash = Animator.StringToHash("isMoving");
+    }
+
     // Jump function
     void Jump()
     {
         velocity.y = jumpVelocityMax * -1.0f * gravitySign;
         isJumping = true;
+        animator.SetTrigger(onJumpAnimationHash);
+        animator.SetBool(isAirborneAnimationHash, true);
         return;
     }
 
@@ -656,6 +693,7 @@ public class SCR_PlayerController : MonoBehaviour
     public void InvertGravity()
     {
         gravitySign *= -1.0f;
+        spriteRenderer.flipY = !spriteRenderer.flipY;
     }
 
     public void SetGravityDown()
