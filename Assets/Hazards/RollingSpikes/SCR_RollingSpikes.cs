@@ -5,9 +5,13 @@ using UnityEngine;
 public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
 {
     public int m_DamageAmount = 1;
+    public bool m_UseCustomForce = false;
+    public Vector2 m_CustomForceNormal = new Vector2(0.0f, -9.8f);
+    public Vector2 m_CustomForceInverted = new Vector2(0.0f, 9.8f);
 
     private Rigidbody2D m_RigidBody;
     private ConstantForce2D m_GravitySimulator;
+    private bool m_IsForceInverted = false;
 
     protected override void Awake()
     {
@@ -15,7 +19,30 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
         m_RigidBody = GetComponent<Rigidbody2D>();
         m_RigidBody.gravityScale = 0.0f;
         m_GravitySimulator = GetComponent<ConstantForce2D>();
-        m_GravitySimulator.force = Physics2D.gravity;
+        m_IsForceInverted = m_StartSwapped;
+        if (!m_UseCustomForce)
+        {
+            if (m_IsForceInverted)
+            {
+                m_GravitySimulator.force = Physics2D.gravity;
+            }
+            else
+            {
+                m_GravitySimulator.force = Physics2D.gravity * -1.0f;
+            }
+        }
+        else
+        {
+            if (m_IsForceInverted)
+            {
+                m_GravitySimulator.force = m_CustomForceInverted;
+            }
+            else
+            {
+                m_GravitySimulator.force = m_CustomForceNormal;
+            }
+        }
+
     }
     public override void DoSwap(eSwapType type)
     {
@@ -23,7 +50,24 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
         {
             return;
         }
-        m_GravitySimulator.force = new Vector2(m_GravitySimulator.force.x, -m_GravitySimulator.force.y);
+        m_IsForceInverted = !m_IsForceInverted;
+        if (!m_UseCustomForce)
+        {
+            m_GravitySimulator.force = new Vector2(m_GravitySimulator.force.x, -m_GravitySimulator.force.y);
+        }
+        else
+        {
+            if (m_IsForceInverted)
+            {
+                m_GravitySimulator.force = m_CustomForceInverted;
+            }
+            else
+            {
+                m_GravitySimulator.force = m_CustomForceNormal;
+            }
+        }
+
+        return;
     }
 
     public void OnTriggerEnter2D(Collider2D collision)
@@ -38,7 +82,6 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
 
     private void CheckDamage(GameObject other)
     {
-        Debug.Log(other.name);
         if (other == null)
         {
             return;

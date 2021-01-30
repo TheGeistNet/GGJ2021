@@ -13,10 +13,12 @@ public class SCR_Switch : MonoBehaviour
     private float m_RetriggerTimer = 0.0f;
     private bool m_HasTriggered = false;
     private Collider2D m_Collider;
+    private Color m_switchColor;
 
     private void Awake()
     {
         m_Collider = GetComponent<Collider2D>();
+        m_switchColor = GetComponent<SpriteRenderer>().color;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -77,8 +79,7 @@ public class SCR_Switch : MonoBehaviour
     private void RevertTriggerFeedback()
     {
         m_RetriggerTimer = 0.0f;
-        m_HasTriggered = false;
-        GetComponent<SpriteRenderer>().color = Color.red;
+        GetComponent<SpriteRenderer>().color = m_switchColor;
         List<Collider2D> overlappingColliders = new List<Collider2D>();
         int num = m_Collider.OverlapCollider(m_Filter, overlappingColliders);
         if(num != 0)
