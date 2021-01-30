@@ -72,8 +72,8 @@ public class SCR_PlayerController : MonoBehaviour
     bool isWalking = false;
     float walkAxis;
     float walkDirection = 1.0f;
-    float walkAccelerationProgress = 0.0f;
-    float walkDecelerationProgress = 1.0f;
+    public float walkAccelerationProgress = 0.0f;
+    public float walkDecelerationProgress = 1.0f;
 
     [Header("Jumping")]
     [SerializeField]
@@ -111,7 +111,7 @@ public class SCR_PlayerController : MonoBehaviour
     [SerializeField, Min(0.0f)]
     float wallJumpMinPushOffTime = 0.5f;
     float wallJumpStartTimeStamp;
-    public bool isWallJumping;
+    bool isWallJumping;
     float wallJumpDirection = 1.0f;
     float wallJumpLastPushOffTimeTimeStamp;
 
@@ -164,7 +164,7 @@ public class SCR_PlayerController : MonoBehaviour
         // If walljumped recently
         if (isWallJumping && Time.time - wallJumpStartTimeStamp <= wallJumpMinPushOffTime)
         {
-            float maxAcelerationProgress = Mathf.Min(wallJumpStartAccelerationScalar, Mathf.Abs(walkAxis));
+            float maxAcelerationProgress = Mathf.Max(wallJumpStartAccelerationScalar, Mathf.Abs(walkAxis));
 
             if (walkAccelerationProgress < maxAcelerationProgress)
             {
@@ -640,7 +640,7 @@ public class SCR_PlayerController : MonoBehaviour
 
             // Otherwise, check to see if we are jumping off a wall
             else if ((isCollidingLeft || isCollidingRight || (!isWallJumping && Time.time - wallJumpLastPushOffTimeTimeStamp <= wallJumpBufferTime)) 
-                && (walkAxis == 0.0f || Mathf.Sign(walkAxis) != -wallJumpDirection))
+                && (walkAxis == 0.0f || Mathf.Sign(walkAxis) == wallJumpDirection))
             {
                 WallJump();
             }
