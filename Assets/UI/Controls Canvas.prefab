@@ -145,7 +145,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 3ae97d94be274494396f22af93692599, type: 3}
+    m_Font: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     m_FontSize: 100
     m_FontStyle: 0
     m_BestFit: 0
@@ -224,7 +224,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 3ae97d94be274494396f22af93692599, type: 3}
+    m_Font: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     m_FontSize: 180
     m_FontStyle: 0
     m_BestFit: 0
@@ -572,6 +572,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4869833589363565157}
     m_Modifications:
+    - target: {fileID: 2807313746653760114, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     - target: {fileID: 2984135062289805634, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
       propertyPath: m_Name
       value: RebindUIPrefab (2)
@@ -596,6 +600,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: Walk
       objectReference: {fileID: 0}
+    - target: {fileID: 2984135062600644299, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     - target: {fileID: 8730396953362654339, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -644,6 +652,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: A/D
       objectReference: {fileID: 0}
+    - target: {fileID: 8955655475182399770, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
 --- !u!4 &3885837976718438024 stripped
@@ -658,6 +670,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4869833589363565157}
     m_Modifications:
+    - target: {fileID: 2807313746653760114, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     - target: {fileID: 2984135062289805634, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
       propertyPath: m_Name
       value: RebindUIPrefab (1)
@@ -682,6 +698,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: Swap
       objectReference: {fileID: 0}
+    - target: {fileID: 2984135062600644299, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     - target: {fileID: 8730396953362654339, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -730,6 +750,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: Press F
       objectReference: {fileID: 0}
+    - target: {fileID: 8955655475182399770, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
 --- !u!4 &1460440325169673533 stripped
@@ -744,6 +768,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4869833589363565157}
     m_Modifications:
+    - target: {fileID: 2807313746653760114, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     - target: {fileID: 2984135062289805634, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
       propertyPath: m_Name
       value: RebindUIPrefab
@@ -752,6 +780,10 @@ PrefabInstance:
       propertyPath: m_RebindOverlay
       value: 
       objectReference: {fileID: 4551928751182199443}
+    - target: {fileID: 2984135062600644299, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     - target: {fileID: 8730396953362654339, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -800,6 +832,10 @@ PrefabInstance:
       propertyPath: m_Text
       value: W
       objectReference: {fileID: 0}
+    - target: {fileID: 8955655475182399770, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 28b68c7ce183288488d85cb2e4b1058b, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f25dcd618d3acd64795bf8bb32edb6c9, type: 3}
 --- !u!4 &242348997869415772 stripped
