@@ -372,6 +372,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 8223051734281805172}
+        m_TargetAssemblyTypeName: SCR_PlayerUI, Assembly-CSharp
+        m_MethodName: AddToSwapCounter
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 2e66c6f0-cbf7-40ba-bbfe-8925c8bfcd94
     m_ActionName: Gameplay/Swap[/Keyboard/f]
   - m_PersistentCalls:

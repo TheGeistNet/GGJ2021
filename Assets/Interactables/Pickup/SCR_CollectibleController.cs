@@ -16,12 +16,9 @@ public class SCR_CollectibleController : MonoBehaviour, SCR_IDamageable
     {
         SCR_PlayerController playerRef = other.gameObject.GetComponent<SCR_PlayerController>();
 
-        if(playerRef)
+        if (playerRef)
         {
-            for (int x = 0; x < m_PointValue; ++x)
-            {
-                hudCounter.AddToCollectible();
-            }
+            hudCounter.AddToCollectible(m_PointValue);
             Destroy(gameObject, 0.1f);
         }
     }
