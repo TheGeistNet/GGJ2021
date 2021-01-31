@@ -98,6 +98,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PointValue: 1
+  m_Source: {fileID: 6962678593109636035}
+  m_SpriteRenderer: {fileID: -4602927633844098237}
 --- !u!61 &256424238056999433
 BoxCollider2D:
   m_ObjectHideFlags: 0
