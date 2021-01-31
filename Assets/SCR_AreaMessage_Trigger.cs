@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SCR_AreaMessage_Trigger : MonoBehaviour
 {
-    [SerializeField]
+    [SerializeReference]
     public SCR_InGameMessageController messageController;
 
     [SerializeField]
