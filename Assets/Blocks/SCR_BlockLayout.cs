@@ -17,11 +17,14 @@ public class SCR_BlockLayout : MonoBehaviour
     float endLength = 1.0f;
     [SerializeField, Min(0.1f)]
     float height = 0.5f;
+    [SerializeField]
     GameObject middlePiece;
+    [SerializeField]
     GameObject rightEndPiece;
+    [SerializeField]
     GameObject leftEndPiece;
 
-
+    [ExecuteInEditMode]
     public void LayoutBlock()
     {
         // Clear old pieces
