@@ -1,7 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
 [RequireComponent(typeof(BoxCollider2D))]
 
 public class SCR_BlockLayout : MonoBehaviour
@@ -30,15 +27,15 @@ public class SCR_BlockLayout : MonoBehaviour
         // Clear old pieces
         if (middlePiece)
         {
-            Destroy(middlePiece);
+            DestroyImmediate(middlePiece);
         }
         if (leftEndPiece)
         {
-            Destroy(leftEndPiece);
+            DestroyImmediate(leftEndPiece);
         }
         if (rightEndPiece)
         {
-            Destroy(rightEndPiece);
+            DestroyImmediate(rightEndPiece);
         }
 
 
