@@ -19,7 +19,6 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
         m_RigidBody = GetComponent<Rigidbody2D>();
         m_RigidBody.gravityScale = 0.0f;
         m_GravitySimulator = GetComponent<ConstantForce2D>();
-        m_IsForceInverted = m_StartSwapped;
         if (!m_UseCustomForce)
         {
             if (m_IsForceInverted)
