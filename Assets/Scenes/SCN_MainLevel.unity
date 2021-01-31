@@ -1525,6 +1525,14 @@ PrefabInstance:
       propertyPath: wallJumpStartAccelerationScalar
       value: 0.75
       objectReference: {fileID: 0}
+    - target: {fileID: 4208160364020852685, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4208160364020852685, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e17ff53434bbf354fbec2b738ccc4427, type: 3}
 --- !u!1001 &317984051
@@ -2277,6 +2285,14 @@ PrefabInstance:
     - target: {fileID: 4829520700303439373, guid: 2eb9a30957b52f04ca80cfc037ccc899, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351775204822776809, guid: 2eb9a30957b52f04ca80cfc037ccc899, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -23.68164
+      objectReference: {fileID: 0}
+    - target: {fileID: 5351775204822776809, guid: 2eb9a30957b52f04ca80cfc037ccc899, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -109.557495
       objectReference: {fileID: 0}
     - target: {fileID: 6037189731382295291, guid: 2eb9a30957b52f04ca80cfc037ccc899, type: 3}
       propertyPath: m_AnchorMax.x
@@ -5538,6 +5554,61 @@ Transform:
   m_Father: {fileID: 920928799}
   m_RootOrder: 30
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 190}
+--- !u!1 &1230747392
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1230747393}
+  - component: {fileID: 1230747394}
+  m_Layer: 0
+  m_Name: ReverbZone
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1230747393
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1230747392}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2013609975}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!167 &1230747394
+AudioReverbZone:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1230747392}
+  m_Enabled: 1
+  m_MinDistance: 2000
+  m_MaxDistance: 2000
+  m_ReverbPreset: 27
+  m_Room: -426
+  m_RoomHF: 0
+  m_DecayTime: 2.91
+  m_DecayHFRatio: 1.3
+  m_Reflections: -602
+  m_ReflectionsDelay: 0.015
+  m_Reverb: -302
+  m_ReverbDelay: 0.022
+  m_HFReference: 5000
+  m_Diffusion: 29.3
+  m_Density: 100
+  m_LFReference: 250
+  m_RoomLF: 0
 --- !u!1 &1246860882
 GameObject:
   m_ObjectHideFlags: 0
@@ -7241,7 +7312,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 6666019834140960312, guid: cb85e1086b6180742a82ab4ede61ad58, type: 2}
   m_audioClip: {fileID: 8300000, guid: 9497f759dfa6c6441bc199fc271f92fd, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.7
   m_Pitch: 1
   Loop: 1
   Mute: 0
@@ -9216,6 +9287,7 @@ Transform:
   m_Children:
   - {fileID: 1037582404}
   - {fileID: 1640819491}
+  - {fileID: 1230747393}
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9357,8 +9429,16 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7386798295479403947, guid: d93544064f221814d8b2418a3a22cf82, type: 3}
+      propertyPath: m_CustomForceNormal.y
+      value: 9.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386798295479403947, guid: d93544064f221814d8b2418a3a22cf82, type: 3}
       propertyPath: m_CustomForceInverted.x
       value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7386798295479403947, guid: d93544064f221814d8b2418a3a22cf82, type: 3}
+      propertyPath: m_CustomForceInverted.y
+      value: 9.8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d93544064f221814d8b2418a3a22cf82, type: 3}
