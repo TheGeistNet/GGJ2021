@@ -14,9 +14,12 @@ public class SCR_PlayerDeath : MonoBehaviour, SCR_IDamageable, SCR_ICanTrigger
 
     private float m_TimeOfDeath = -1;
 
+    SCR_PlayerAudio playerAudio;
+
     private void Awake()
     {
         m_VFX.Stop();
+        playerAudio = GetComponent<SCR_PlayerAudio>();
     }
 
     public void Damage(int amount, GameObject source, Vector3 contactPoint)
@@ -44,6 +47,7 @@ public class SCR_PlayerDeath : MonoBehaviour, SCR_IDamageable, SCR_ICanTrigger
         m_VFX.Play();
         m_SpriteRenderer.enabled = false;
         m_PlayerController.physicsDisabled = true;
+        playerAudio.AudioDeath();
     }
 
     private void Update()

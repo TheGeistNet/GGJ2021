@@ -11,11 +11,18 @@ public class SCR_ScoreboardHUD : MonoBehaviour
     public Text m_GradeText;
 
     private float m_Timer;
+    AudioSource thisAudioSource;
+
+    private void Start()
+    {
+        thisAudioSource = GetComponent<AudioSource>();
+    }
 
     public void StartScoreboard(SCR_ScoreboardEntry entry)
     {
         background1.SetActive(true);
         background2.SetActive(true);
+        thisAudioSource.Play();
         //m_LabelText.text = string.Format(m_LabelText.text, entry.usedSwaps, entry.maxSwaps, entry.amountCollected, entry.maxCollected);
         m_LabelText.text = string.Format(m_LabelText.text, entry.usedSwaps, entry.amountCollected, entry.maxCollected);
         int index = -1;

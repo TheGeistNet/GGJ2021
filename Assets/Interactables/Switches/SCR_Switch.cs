@@ -13,12 +13,14 @@ public class SCR_Switch : MonoBehaviour
     private float m_RetriggerTimer = 0.0f;
     private bool m_HasTriggered = false;
     private Collider2D m_Collider;
+    private AudioSource thisAudioSource;
     private Color m_switchColor;
 
     private void Awake()
     {
         m_Collider = GetComponent<Collider2D>();
         m_switchColor = GetComponent<SpriteRenderer>().color;
+        thisAudioSource = GetComponent<AudioSource>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -57,6 +59,7 @@ public class SCR_Switch : MonoBehaviour
                 trigger.Trigger();
             }
         }
+        thisAudioSource.Play();
     }
 
     private void FixedUpdate()
