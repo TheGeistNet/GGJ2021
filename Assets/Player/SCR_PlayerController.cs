@@ -115,6 +115,7 @@ public class SCR_PlayerController : MonoBehaviour
     float wallJumpDirection = 1.0f;
     float wallJumpLastPushOffTimeTimeStamp;
 
+    public bool physicsDisabled = false;
 
     // Debug variables
 #if UNITY_EDITOR
@@ -136,7 +137,10 @@ public class SCR_PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        UpdateMovement();
+        if (!physicsDisabled)
+        {
+            UpdateMovement();
+        }
 
         return;
     }
@@ -550,6 +554,10 @@ public class SCR_PlayerController : MonoBehaviour
     // Walking
     public void OnWalk(InputAction.CallbackContext context)
     {
+        if(physicsDisabled)
+        {
+            return;
+        }
         if (context.performed)
         {
             isWalking = true;
@@ -624,6 +632,10 @@ public class SCR_PlayerController : MonoBehaviour
     // Controls
     public void OnJump(InputAction.CallbackContext context)
     {
+        if (physicsDisabled)
+        {
+            return;
+        }
         if (context.performed)
         {
             // If grounded, jump

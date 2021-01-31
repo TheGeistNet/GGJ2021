@@ -72,15 +72,16 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        CheckDamage(collision.gameObject);
+        CheckDamage(collision.gameObject, transform.position);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        CheckDamage(collision.gameObject);
+        Vector2 contactPoint = collision.GetContact(0).point;
+        CheckDamage(collision.gameObject, new Vector3(contactPoint.x, contactPoint.y, 0));
     }
 
-    private void CheckDamage(GameObject other)
+    private void CheckDamage(GameObject other, Vector3 collisionPoint)
     {
         if (other == null)
         {
@@ -91,7 +92,7 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
         {
             return;
         }
-        damagable.Damage(m_DamageAmount);
+        damagable.Damage(m_DamageAmount, gameObject, collisionPoint);
     }
 
 }

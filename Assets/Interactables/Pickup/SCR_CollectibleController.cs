@@ -23,7 +23,7 @@ public class SCR_CollectibleController : MonoBehaviour, SCR_IDamageable
         }
     }
 
-    public void Damage(int amount)
+    public void Damage(int amount, GameObject source, Vector3 contactPoint)
     {
         Destroy(gameObject, 0.1f);
     }

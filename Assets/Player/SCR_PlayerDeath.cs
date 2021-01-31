@@ -3,47 +3,47 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.InputSystem;
+using UnityEngine.VFX;
 
 public class SCR_PlayerDeath : MonoBehaviour, SCR_IDamageable, SCR_ICanTrigger
 {
-    public GameObject[] m_OnDeathFeedbackObjects;
+    public VisualEffect m_VFX;
+    public SpriteRenderer m_SpriteRenderer;
+    public SCR_PlayerController m_PlayerController;
     public float m_TimeToWait = 2.0f;
 
     private float m_TimeOfDeath = -1;
 
     private void Awake()
     {
-        foreach(GameObject g in m_OnDeathFeedbackObjects)
-        {
-            g.SetActive(false);
-        }
+        m_VFX.Stop();
     }
 
-    public void Damage(int amount)
+    public void Damage(int amount, GameObject source, Vector3 contactPoint)
     {
-        Kill();
+        Kill(contactPoint);
     }
 
     public void OnQuickRestart(InputAction.CallbackContext context)
     {
         if (context.performed)
         {
-            Kill();
+            Kill(Vector3.zero);
             m_TimeOfDeath = Time.time + m_TimeToWait;
         }
     }
 
-    public void Kill()
+    public void Kill(Vector3 contactPoint)
     {
         if(m_TimeOfDeath != -1)
         {
             return;
         }
         m_TimeOfDeath = Time.time;
-        foreach (GameObject g in m_OnDeathFeedbackObjects)
-        {
-            g.SetActive(true);
-        }
+        m_VFX.SetVector3("SprayDirection", (transform.position - contactPoint).normalized);
+        m_VFX.Play();
+        m_SpriteRenderer.enabled = false;
+        m_PlayerController.physicsDisabled = true;
     }
 
     private void Update()
