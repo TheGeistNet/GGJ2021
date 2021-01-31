@@ -13,13 +13,14 @@ public class SCR_Door : MonoBehaviour, SCR_ITriggerable
     private Vector3 direction;
     private float timer;
     private bool m_Closing = false;
-
+    private AudioSource thisAudioSource;
     private void Awake()
     {
         m_Closing = false;
         timer = 0;
         direction = m_EndPosition - m_StartPosition;
         transform.position = m_StartPosition;
+        thisAudioSource = GetComponent<AudioSource>();
     }
 
 
@@ -31,6 +32,7 @@ public class SCR_Door : MonoBehaviour, SCR_ITriggerable
             if(timer > m_Time)
             {
                 timer = m_Time;
+                thisAudioSource.Stop();
                 m_Closing = false;
             }
             transform.position = m_StartPosition + direction * (timer / m_Time);
@@ -41,6 +43,7 @@ public class SCR_Door : MonoBehaviour, SCR_ITriggerable
     public void Trigger()
     {
         m_Closing = true;
+        thisAudioSource.Play();
         timer = 0;
     }
 }

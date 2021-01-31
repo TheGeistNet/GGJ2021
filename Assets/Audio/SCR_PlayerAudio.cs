@@ -12,6 +12,7 @@ public class SCR_PlayerAudio : MonoBehaviour
     public AudioSource leftFootAudioSource;
     public AudioSource rightFootAudioSource;
     public AudioSource swapAudioSource;
+    public AudioSource wallJumpAudioSource;
 
     // Start is called before the first frame update
     void Start()
@@ -27,7 +28,7 @@ public class SCR_PlayerAudio : MonoBehaviour
 
     public void AudioDeath()
     {
-
+        deathAudioSource.Play();
     }
 
     public void AudioJump()
@@ -48,6 +49,11 @@ public class SCR_PlayerAudio : MonoBehaviour
     public void RightFoot()
     {
         rightFootAudioSource.Play();
+    }
+
+    public void AudioWallJump()
+    {
+        wallJumpAudioSource.Play();
     }
 
     public void Swap(InputAction.CallbackContext context)

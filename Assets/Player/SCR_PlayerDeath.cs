@@ -11,12 +11,15 @@ public class SCR_PlayerDeath : MonoBehaviour, SCR_IDamageable, SCR_ICanTrigger
 
     private float m_TimeOfDeath = -1;
 
+    SCR_PlayerAudio playerAudio;
+
     private void Awake()
     {
         foreach(GameObject g in m_OnDeathFeedbackObjects)
         {
             g.SetActive(false);
         }
+        playerAudio = GetComponent<SCR_PlayerAudio>();
     }
 
     public void Damage(int amount)
@@ -44,6 +47,7 @@ public class SCR_PlayerDeath : MonoBehaviour, SCR_IDamageable, SCR_ICanTrigger
         {
             g.SetActive(true);
         }
+        playerAudio.AudioDeath();
     }
 
     private void Update()
