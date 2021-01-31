@@ -19,7 +19,6 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
         m_RigidBody = GetComponent<Rigidbody2D>();
         m_RigidBody.gravityScale = 0.0f;
         m_GravitySimulator = GetComponent<ConstantForce2D>();
-        m_IsForceInverted = m_StartSwapped;
         if (!m_UseCustomForce)
         {
             if (m_IsForceInverted)
@@ -72,15 +71,16 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
 
     public void OnTriggerEnter2D(Collider2D collision)
     {
-        CheckDamage(collision.gameObject);
+        CheckDamage(collision.gameObject, transform.position);
     }
 
     public void OnCollisionEnter2D(Collision2D collision)
     {
-        CheckDamage(collision.gameObject);
+        Vector2 contactPoint = collision.GetContact(0).point;
+        CheckDamage(collision.gameObject, new Vector3(contactPoint.x, contactPoint.y, 0));
     }
 
-    private void CheckDamage(GameObject other)
+    private void CheckDamage(GameObject other, Vector3 collisionPoint)
     {
         if (other == null)
         {
@@ -91,7 +91,7 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
         {
             return;
         }
-        damagable.Damage(m_DamageAmount);
+        damagable.Damage(m_DamageAmount, gameObject, collisionPoint);
     }
 
 }
