@@ -24,11 +24,11 @@ public class SCR_RollingSpikes : SCR_DimensionSwapObserverBase, SCR_ICanTrigger
         {
             if (m_IsForceInverted)
             {
-                m_GravitySimulator.force = Physics2D.gravity;
+                m_GravitySimulator.force = Physics2D.gravity * -1.0f;
             }
             else
             {
-                m_GravitySimulator.force = Physics2D.gravity * -1.0f;
+                m_GravitySimulator.force = Physics2D.gravity;
             }
         }
         else
