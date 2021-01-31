@@ -21,7 +21,7 @@ public class SCR_HUDSwapCounter : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     public void AddToCounter()
@@ -40,5 +40,15 @@ public class SCR_HUDSwapCounter : MonoBehaviour
     {
         counterTally = 0;
         collectibleTally = 0;
+    }
+
+    public int GetSwapCount()
+    {
+        return counterTally;
+    }
+
+    public int GetCollectibleCount()
+    {
+        return collectibleTally;
     }
 }

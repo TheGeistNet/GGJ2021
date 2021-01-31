@@ -7,16 +7,20 @@ public class SCR_NextSceneTrigger : MonoBehaviour
 {
     [SerializeField] string nextSceneName = "";
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
+    private bool m_WaitingForSceneTransition = false;
 
     // Update is called once per frame
     void Update()
     {
-
+        if(m_WaitingForSceneTransition)
+        {
+            if(SCR_ScoreboardManager.Instance.ScoreboardFinished())
+            {
+                SCR_LoadData.sceneToLoad = nextSceneName;
+                SceneManager.LoadSceneAsync("SCN_LoadingScreen");
+                m_WaitingForSceneTransition = false;
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -25,6 +29,12 @@ public class SCR_NextSceneTrigger : MonoBehaviour
         {
             if (nextSceneName != "")
             {
+
+                if(SCR_ScoreboardManager.Instance.CanShowScoreboard())
+                {
+                    m_WaitingForSceneTransition = true;
+                    return;
+                }
                 SCR_LoadData.sceneToLoad = nextSceneName;
                 SceneManager.LoadSceneAsync("SCN_LoadingScreen");
             }
