@@ -62,10 +62,10 @@ public class SCR_BlockLayout : MonoBehaviour
             }
 
             // Update collider
-            GetComponent<BoxCollider2D>().size = new Vector2(totalLength, height);
+            BoxCollider2D boxCollider = GetComponent<BoxCollider2D>();
+            boxCollider.size = new Vector2(totalLength, height);
+            boxCollider.offset = new Vector2();
         }
-
-
         return;
     }
 
