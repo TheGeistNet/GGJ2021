@@ -53,6 +53,7 @@ public class SCR_PlayerController : MonoBehaviour
     float gravitySign = -1.0f;
     float gravityAccelerationDefault;
     float gravityAcceleration;
+    bool isFalling = false;
 
     [Header("Walking")]
     [SerializeField]
@@ -98,6 +99,7 @@ public class SCR_PlayerController : MonoBehaviour
     [Header("Wall Sliding")]
     [SerializeField, Min(0.0f)]
     float wallSlideMaxSpeed = 2.5f;
+    bool isAgainstWall = false;
 
     [Header("Wall Jumping")]
     [SerializeField, Min(0.0f)]
@@ -256,6 +258,12 @@ public class SCR_PlayerController : MonoBehaviour
         // If descending...
         if (Mathf.Sign(velocity.y) == gravitySign)
         {
+            if (!isFalling)
+            {
+                animator.SetBool("isFalling", true);
+                isFalling = true;
+            }
+
             // If wall sliding, clamp the max descent speed
             if (isCollidingLeft && walkAxis < 0.0f || isCollidingRight && walkAxis > 0.0f)
             {
@@ -278,6 +286,11 @@ public class SCR_PlayerController : MonoBehaviour
         // Otherwise, apply normal velocity
         else
         {
+            if (isFalling)
+            {
+                animator.SetBool("isFalling", false);
+                isFalling = false;
+            }
 
             velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime), -gravityMaxMagnitude, gravityMaxMagnitude);
         }
@@ -316,6 +329,12 @@ public class SCR_PlayerController : MonoBehaviour
                 isCollidingRight = false;
             }
 
+            if (!isAgainstWall)
+            {
+                animator.SetBool("isAgainstWall", true);
+                isAgainstWall = true;
+            }
+
             wallJumpDirection = -traceSign;
 
             isWallJumping = false;
@@ -335,6 +354,12 @@ public class SCR_PlayerController : MonoBehaviour
                 // Update collision state
                 isCollidingLeft = false;
                 isCollidingRight = false;
+            }
+
+            if (isAgainstWall)
+            {
+                animator.SetBool("isAgainstWall", false);
+                isAgainstWall = false;
             }
         }
 
@@ -387,7 +412,12 @@ public class SCR_PlayerController : MonoBehaviour
                 }
 
                 // Update collision state
-                isCollidingBelow = true;
+                if (!isCollidingBelow)
+                {
+                    isCollidingBelow = true;
+                    animator.SetBool("isOnGround", true);
+                }
+
                 isCollidingAbove = false;
             }
 
@@ -413,6 +443,11 @@ public class SCR_PlayerController : MonoBehaviour
             }
 
             // Update collision state
+            if (isCollidingBelow)
+            {
+                isCollidingBelow = false;
+                animator.SetBool("isOnGround", false);
+            }
             isCollidingBelow = false;
             isCollidingAbove = false;
         }
@@ -547,6 +582,7 @@ public class SCR_PlayerController : MonoBehaviour
         isWallJumping = true;
         walkDirection = wallJumpDirection;
         wallJumpStartTimeStamp = Time.time;
+        animator.SetTrigger("onWallJump");
 
         return;
     }
