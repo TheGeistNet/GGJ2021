@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(BoxCollider2D))]
 
@@ -36,6 +37,9 @@ public class SCR_PlayerController : MonoBehaviour
     int onLandAnimationHash;
     int isAirborneAnimationHash;
     int isMovingAnimationHash;
+
+    [Header("VFX")]
+    public VisualEffect m_JumpVFX;
 
     [Header("Raycasting")]
     [SerializeField, Min(2)]
@@ -470,8 +474,7 @@ public class SCR_PlayerController : MonoBehaviour
     {
         if (startWithInversedGravity)
         {
-            gravitySign = 1.0f;
-            spriteRenderer.flipY = !spriteRenderer.flipY;
+            InvertGravity();
         }
         gravityAccelerationDefault = (2.0f * jumpHeightMax) / Mathf.Pow(jumpTimeToApex, 2.0f);
         gravityAcceleration = gravityAccelerationDefault;
@@ -536,6 +539,7 @@ public class SCR_PlayerController : MonoBehaviour
         isJumping = true;
         animator.SetTrigger(onJumpAnimationHash);
         animator.SetBool(isAirborneAnimationHash, true);
+        m_JumpVFX.Play();
         return;
     }
 
@@ -706,6 +710,7 @@ public class SCR_PlayerController : MonoBehaviour
     {
         gravitySign *= -1.0f;
         spriteRenderer.flipY = !spriteRenderer.flipY;
+        m_JumpVFX.SetFloat("DistY", m_JumpVFX.GetFloat("DistY") * -1.0f);
     }
 
     public void SetGravityDown()

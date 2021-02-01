@@ -346,6 +346,7 @@ MonoBehaviour:
   boundingCollider: {fileID: 1817163816175706379}
   animator: {fileID: 5394742429869018966}
   spriteRenderer: {fileID: 8374739330077031772}
+  m_JumpVFX: {fileID: 1560395512669340238}
   horizontalRayCount: 5
   verticalRayCount: 5
   gravityMaxMagnitude: 20
@@ -909,15 +910,33 @@ VisualEffect:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2891783516256482652}
   m_Enabled: 1
-  m_Asset: {fileID: 8926484042661614526, guid: 33d83229397998a4e9df61a732b2cce7, type: 3}
-  m_InitialEventName: OnPlay
-  m_InitialEventNameOverriden: 0
+  m_Asset: {fileID: 8926484042661614526, guid: 46c5412892700b64da5052d60bfc556a, type: 3}
+  m_InitialEventName: 
+  m_InitialEventNameOverriden: 1
   m_StartSeed: 0
   m_ResetSeedOnPlay: 1
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
-      m_Array: []
+      m_Array:
+      - m_Value: 0.12
+        m_Name: XOffset
+        m_Overridden: 1
+      - m_Value: 0.03
+        m_Name: DistX
+        m_Overridden: 1
+      - m_Value: -0.5
+        m_Name: DistY
+        m_Overridden: 1
+      - m_Value: 0.1
+        m_Name: SpreadX
+        m_Overridden: 1
+      - m_Value: 5
+        m_Name: PrimaryYSpreadInverse
+        m_Overridden: 1
+      - m_Value: 0.5
+        m_Name: PrimarySpreadSpeed
+        m_Overridden: 1
     m_Vector2f:
       m_Array: []
     m_Vector3f:
@@ -927,7 +946,16 @@ VisualEffect:
     m_Uint:
       m_Array: []
     m_Int:
-      m_Array: []
+      m_Array:
+      - m_Value: 5
+        m_Name: Num
+        m_Overridden: 1
+      - m_Value: 3
+        m_Name: NumSecondary
+        m_Overridden: 1
+      - m_Value: 25
+        m_Name: NumPrimary
+        m_Overridden: 1
     m_Matrix4x4f:
       m_Array: []
     m_AnimationCurve:
