@@ -9,11 +9,11 @@ EditorBuildSettings:
     path: Assets/Scenes/SCN_MainMenu.unity
     guid: 8ffb8208fce0dad4a964000e6492c505
   - enabled: 1
-    path: Assets/Scenes/SCN_IntroCutscene.unity
-    guid: 11505101f7ec2c24f8a8575853c7aa4a
-  - enabled: 1
     path: Assets/Scenes/SCN_LoadingScreen.unity
     guid: bb05f72edc6d8ce4198c0deab5192740
+  - enabled: 1
+    path: Assets/Scenes/SCN_TutorialLevel.unity
+    guid: d9f6bcac492e65c4badb432d357d7b0b
   - enabled: 1
     path: Assets/Scenes/SCN_MainLevel.unity
     guid: 0d3f6944807af8f4abb4643098b7bf78
