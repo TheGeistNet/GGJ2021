@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.VFX;
 
 [RequireComponent(typeof(BoxCollider2D))]
 
@@ -35,11 +34,7 @@ public class SCR_PlayerController : MonoBehaviour
     int velocityXAnimationHash;
     int onJumpAnimationHash;
     int onLandAnimationHash;
-    int isAirborneAnimationHash;
     int isMovingAnimationHash;
-
-    [Header("VFX")]
-    public VisualEffect m_JumpVFX;
 
     [Header("Raycasting")]
     [SerializeField, Min(2)]
@@ -57,6 +52,7 @@ public class SCR_PlayerController : MonoBehaviour
     float gravitySign = -1.0f;
     float gravityAccelerationDefault;
     float gravityAcceleration;
+    bool isFalling = false;
 
     [Header("Walking")]
     [SerializeField]
@@ -84,7 +80,7 @@ public class SCR_PlayerController : MonoBehaviour
     float jumpTimeToApex = 0.6f;
     [SerializeField, Min(0.1f)]
     float jumpHeightMax = 3.0f;
-    [SerializeField, Min (0.1f)]
+    [SerializeField, Min(0.1f)]
     float jumpHeightMin = 1.0f;
     [SerializeField, Min(0.0f)]
     float jumpLandingBufferTime = 0.1f;
@@ -102,6 +98,7 @@ public class SCR_PlayerController : MonoBehaviour
     [Header("Wall Sliding")]
     [SerializeField, Min(0.0f)]
     float wallSlideMaxSpeed = 2.5f;
+    bool isAgainstWall = false;
 
     [Header("Wall Jumping")]
     [SerializeField, Min(0.0f)]
@@ -260,6 +257,12 @@ public class SCR_PlayerController : MonoBehaviour
         // If descending...
         if (Mathf.Sign(velocity.y) == gravitySign)
         {
+            if (!isFalling)
+            {
+                animator.SetBool("isFalling", true);
+                isFalling = true;
+            }
+
             // If wall sliding, clamp the max descent speed
             if (isCollidingLeft && walkAxis < 0.0f || isCollidingRight && walkAxis > 0.0f)
             {
@@ -282,6 +285,11 @@ public class SCR_PlayerController : MonoBehaviour
         // Otherwise, apply normal velocity
         else
         {
+            if (isFalling)
+            {
+                animator.SetBool("isFalling", false);
+                isFalling = false;
+            }
 
             velocity.y = Mathf.Clamp(velocity.y + (gravityAcceleration * gravitySign * Time.deltaTime), -gravityMaxMagnitude, gravityMaxMagnitude);
         }
@@ -320,6 +328,12 @@ public class SCR_PlayerController : MonoBehaviour
                 isCollidingRight = false;
             }
 
+            if (!isAgainstWall)
+            {
+                animator.SetBool("isAgainstWall", true);
+                isAgainstWall = true;
+            }
+
             wallJumpDirection = -traceSign;
 
             isWallJumping = false;
@@ -339,6 +353,12 @@ public class SCR_PlayerController : MonoBehaviour
                 // Update collision state
                 isCollidingLeft = false;
                 isCollidingRight = false;
+            }
+
+            if (isAgainstWall)
+            {
+                animator.SetBool("isAgainstWall", false);
+                isAgainstWall = false;
             }
         }
 
@@ -375,7 +395,6 @@ public class SCR_PlayerController : MonoBehaviour
                     isJumping = false;
                     isWallJumping = false;
 
-                    animator.SetBool(isAirborneAnimationHash, false);
                     animator.SetTrigger(onLandAnimationHash);
 
                     // If a jump is queued in the buffer recently
@@ -391,7 +410,12 @@ public class SCR_PlayerController : MonoBehaviour
                 }
 
                 // Update collision state
-                isCollidingBelow = true;
+                if (!isCollidingBelow)
+                {
+                    isCollidingBelow = true;
+                    animator.SetBool("isOnGround", true);
+                }
+
                 isCollidingAbove = false;
             }
 
@@ -417,6 +441,11 @@ public class SCR_PlayerController : MonoBehaviour
             }
 
             // Update collision state
+            if (isCollidingBelow)
+            {
+                isCollidingBelow = false;
+                animator.SetBool("isOnGround", false);
+            }
             isCollidingBelow = false;
             isCollidingAbove = false;
         }
@@ -474,7 +503,8 @@ public class SCR_PlayerController : MonoBehaviour
     {
         if (startWithInversedGravity)
         {
-            InvertGravity();
+            gravitySign = 1.0f;
+            spriteRenderer.flipY = !spriteRenderer.flipY;
         }
         gravityAccelerationDefault = (2.0f * jumpHeightMax) / Mathf.Pow(jumpTimeToApex, 2.0f);
         gravityAcceleration = gravityAccelerationDefault;
@@ -528,7 +558,6 @@ public class SCR_PlayerController : MonoBehaviour
         velocityXAnimationHash = Animator.StringToHash("velocityX");
         onJumpAnimationHash = Animator.StringToHash("onJump");
         onLandAnimationHash = Animator.StringToHash("onLand");
-        isAirborneAnimationHash = Animator.StringToHash("isAirborne");
         isMovingAnimationHash = Animator.StringToHash("isMoving");
     }
 
@@ -538,8 +567,6 @@ public class SCR_PlayerController : MonoBehaviour
         velocity.y = jumpVelocityMax * -1.0f * gravitySign;
         isJumping = true;
         animator.SetTrigger(onJumpAnimationHash);
-        animator.SetBool(isAirborneAnimationHash, true);
-        m_JumpVFX.Play();
         return;
     }
 
@@ -551,6 +578,7 @@ public class SCR_PlayerController : MonoBehaviour
         isWallJumping = true;
         walkDirection = wallJumpDirection;
         wallJumpStartTimeStamp = Time.time;
+        animator.SetTrigger("onWallJump");
 
         return;
     }
@@ -558,7 +586,7 @@ public class SCR_PlayerController : MonoBehaviour
     // Walking
     public void OnWalk(InputAction.CallbackContext context)
     {
-        if(physicsDisabled)
+        if (physicsDisabled)
         {
             return;
         }
@@ -568,10 +596,10 @@ public class SCR_PlayerController : MonoBehaviour
             walkAxis = context.ReadValue<float>();
 
             // Perform wall jump is queued in the buffer
-            if (!isCollidingBelow 
+            if (!isCollidingBelow
                 && !isWallJumping
                 && Mathf.Sign(walkAxis) == wallJumpDirection
-                && jumpLandingQueued 
+                && jumpLandingQueued
                 && Time.time - jumpLandingQueuedTimeStamp <= wallJumpBufferTime)
             {
                 jumpLandingQueued = false;
@@ -655,8 +683,8 @@ public class SCR_PlayerController : MonoBehaviour
             }
 
             // Otherwise, check to see if we are jumping off a wall
-            else if ((isCollidingLeft || isCollidingRight || (!isWallJumping && Time.time - wallJumpLastPushOffTimeTimeStamp <= wallJumpBufferTime)) )
-                //&& (walkAxis == 0.0f || Mathf.Sign(walkAxis) == wallJumpDirection))
+            else if ((isCollidingLeft || isCollidingRight || (!isWallJumping && Time.time - wallJumpLastPushOffTimeTimeStamp <= wallJumpBufferTime)))
+            //&& (walkAxis == 0.0f || Mathf.Sign(walkAxis) == wallJumpDirection))
             {
                 WallJump();
             }
@@ -710,7 +738,6 @@ public class SCR_PlayerController : MonoBehaviour
     {
         gravitySign *= -1.0f;
         spriteRenderer.flipY = !spriteRenderer.flipY;
-        m_JumpVFX.SetFloat("DistY", m_JumpVFX.GetFloat("DistY") * -1.0f);
     }
 
     public void SetGravityDown()
