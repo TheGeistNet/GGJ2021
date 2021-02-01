@@ -34,7 +34,6 @@ public class SCR_PlayerController : MonoBehaviour
     int velocityXAnimationHash;
     int onJumpAnimationHash;
     int onLandAnimationHash;
-    int isAirborneAnimationHash;
     int isMovingAnimationHash;
 
     [Header("Raycasting")]
@@ -396,7 +395,6 @@ public class SCR_PlayerController : MonoBehaviour
                     isJumping = false;
                     isWallJumping = false;
 
-                    animator.SetBool(isAirborneAnimationHash, false);
                     animator.SetTrigger(onLandAnimationHash);
 
                     // If a jump is queued in the buffer recently
@@ -560,7 +558,6 @@ public class SCR_PlayerController : MonoBehaviour
         velocityXAnimationHash = Animator.StringToHash("velocityX");
         onJumpAnimationHash = Animator.StringToHash("onJump");
         onLandAnimationHash = Animator.StringToHash("onLand");
-        isAirborneAnimationHash = Animator.StringToHash("isAirborne");
         isMovingAnimationHash = Animator.StringToHash("isMoving");
     }
 
@@ -570,7 +567,6 @@ public class SCR_PlayerController : MonoBehaviour
         velocity.y = jumpVelocityMax * -1.0f * gravitySign;
         isJumping = true;
         animator.SetTrigger(onJumpAnimationHash);
-        animator.SetBool(isAirborneAnimationHash, true);
         return;
     }
 
