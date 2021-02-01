@@ -43,7 +43,7 @@ public class SCR_PlayerDeath : MonoBehaviour, SCR_IDamageable, SCR_ICanTrigger
             return;
         }
         m_TimeOfDeath = Time.time;
-        m_VFX.SetVector3("SprayDirection", (transform.position - contactPoint).normalized);
+        m_VFX.SetVector3("SprayDirection", -(transform.position - contactPoint).normalized);
         m_VFX.Play();
         m_SpriteRenderer.enabled = false;
         m_PlayerController.physicsDisabled = true;
