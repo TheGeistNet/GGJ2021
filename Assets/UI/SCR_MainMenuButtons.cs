@@ -25,7 +25,8 @@ public class SCR_MainMenuButtons : MonoBehaviour
     public void PlayButton()
     {
         thisAudioSource.Play();
-        SceneManager.LoadScene(1);
+        SCR_LoadData.sceneToLoad = "SCN_TutorialLevel";
+        SceneManager.LoadSceneAsync("SCN_LoadingScreen");
     }
     
     public void ControlsButton()
