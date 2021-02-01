@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.VFX;
 
 public class SCR_CollectibleController : MonoBehaviour, SCR_IDamageable
 {
@@ -9,22 +8,18 @@ public class SCR_CollectibleController : MonoBehaviour, SCR_IDamageable
 
     public AudioSource m_Source;
     public SpriteRenderer m_SpriteRenderer;
-    public VisualEffect m_VFX;
 
     private bool m_Collected = false;
-    private float m_StartPositionY;
 
     SCR_HUDSwapCounter hudCounter;
 
     void Start()
     {
         hudCounter = FindObjectOfType<SCR_HUDSwapCounter>();
-        m_StartPositionY = transform.position.y;
     }
 
     void Update()
     {
-        transform.position = new Vector3(transform.position.x, m_StartPositionY + Mathf.Sin(Time.time) * 0.15f, transform.position.z);
         if(m_Collected && !m_Source.isPlaying)
         {
             Destroy(gameObject);
@@ -40,7 +35,6 @@ public class SCR_CollectibleController : MonoBehaviour, SCR_IDamageable
             hudCounter.AddToCollectible(m_PointValue);
             m_Source.Play();
             m_Collected = true;
-            m_VFX.Stop();
             m_SpriteRenderer.enabled = false;
         }
     }
