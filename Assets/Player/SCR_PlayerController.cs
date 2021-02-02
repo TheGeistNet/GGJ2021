@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.VFX;
 
 [RequireComponent(typeof(BoxCollider2D))]
 
@@ -33,8 +34,10 @@ public class SCR_PlayerController : MonoBehaviour
     SpriteRenderer spriteRenderer;
     int velocityXAnimationHash;
     int onJumpAnimationHash;
-    int onLandAnimationHash;
     int isMovingAnimationHash;
+
+    [Header("VFX")]
+    public VisualEffect m_JumpVFX;
 
     [Header("Raycasting")]
     [SerializeField, Min(2)]
@@ -395,8 +398,6 @@ public class SCR_PlayerController : MonoBehaviour
                     isJumping = false;
                     isWallJumping = false;
 
-                    animator.SetTrigger(onLandAnimationHash);
-
                     // If a jump is queued in the buffer recently
                     if (jumpLandingQueued)
                     {
@@ -503,8 +504,7 @@ public class SCR_PlayerController : MonoBehaviour
     {
         if (startWithInversedGravity)
         {
-            gravitySign = 1.0f;
-            spriteRenderer.flipY = !spriteRenderer.flipY;
+            InvertGravity();
         }
         gravityAccelerationDefault = (2.0f * jumpHeightMax) / Mathf.Pow(jumpTimeToApex, 2.0f);
         gravityAcceleration = gravityAccelerationDefault;
@@ -557,7 +557,6 @@ public class SCR_PlayerController : MonoBehaviour
     {
         velocityXAnimationHash = Animator.StringToHash("velocityX");
         onJumpAnimationHash = Animator.StringToHash("onJump");
-        onLandAnimationHash = Animator.StringToHash("onLand");
         isMovingAnimationHash = Animator.StringToHash("isMoving");
     }
 
@@ -567,6 +566,7 @@ public class SCR_PlayerController : MonoBehaviour
         velocity.y = jumpVelocityMax * -1.0f * gravitySign;
         isJumping = true;
         animator.SetTrigger(onJumpAnimationHash);
+        m_JumpVFX.Play();
         return;
     }
 
@@ -738,6 +738,7 @@ public class SCR_PlayerController : MonoBehaviour
     {
         gravitySign *= -1.0f;
         spriteRenderer.flipY = !spriteRenderer.flipY;
+        m_JumpVFX.SetFloat("DistY", m_JumpVFX.GetFloat("DistY") * -1.0f);
     }
 
     public void SetGravityDown()
